@@ -10,3 +10,4 @@ folium
 sklearn
 shapely
 osmnx
+seaborn
