@@ -133,7 +133,7 @@ def get_path(parent: str, filename: str)-> str:
     file_path 
         file path 
     """
-    parent_path = Path.cwd().parent / ("data/" + parent) # test 
+    parent_path = Path.cwd()/ ("data/" + parent) # test 
     print("Data directory:", parent_path.resolve())
     file_path = os.path.join(parent_path, filename)
 
