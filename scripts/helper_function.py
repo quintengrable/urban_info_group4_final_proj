@@ -1,6 +1,7 @@
 # Shared helper functions for the urban analytics project.
 
 from pathlib import Path
+import os
 from typing import Union
 
 import geopandas as gpd
@@ -114,3 +115,26 @@ def plot_choropleth(
     ax.set_title(title, fontsize=14, pad=12)
     ax.axis("off")
     return fig, ax
+
+#get path
+def get_path(parent: str, filename: str)-> str: 
+    """
+    Get path for importing files. 
+
+    Parameters
+    ----------
+    parent: str
+        "raw" or "processed", depending on what data you are working with 
+    filename: str
+        name of file with extension 
+
+    Returns
+    -------
+    file_path 
+        file path 
+    """
+    parent_path = Path.cwd().parent / ("data/" + parent) # test 
+    print("Data directory:", parent_path.resolve())
+    file_path = os.path.join(parent_path, filename)
+
+    return file_path
