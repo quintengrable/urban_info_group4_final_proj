@@ -1,1 +1,11 @@
-/data
+data/
+
+# Ignore Python virtual environments
+venv/
+.env
+env/
+__pycache__/
+
+# Ignore OS-specific hidden files
+.DS_Store
+Thumbs.db
