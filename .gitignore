@@ -9,3 +9,6 @@ __pycache__/
 # Ignore OS-specific hidden files
 .DS_Store
 Thumbs.db
+
+# Ignore OSMnx cache
+cache/
