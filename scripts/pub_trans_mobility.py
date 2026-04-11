@@ -1,11 +1,8 @@
 import geopandas
+import r5py.sampledata.helsinki
 import shapely
-import r5py  # Just the main module
 
-# In v1.1.3, sample data is accessed via r5py.sampledata.<function>
-# No separate import is required.
-population_grid_path = r5py.sampledata.helsinki_population_grid()
-population_grid = geopandas.read_file(population_grid_path)
+population_grid = geopandas.read_file(r5py.sampledata.helsinki.population_grid)
 
 railway_station = geopandas.GeoDataFrame(
     {
@@ -17,3 +14,7 @@ railway_station = geopandas.GeoDataFrame(
 
 print("Successfully loaded population grid!")
 print(population_grid.head())
+
+overview_map = population_grid.explore("population", cmap="Reds")
+overview_map = railway_station.explore(m=overview_map, marker_type="marker")
+overview_map
