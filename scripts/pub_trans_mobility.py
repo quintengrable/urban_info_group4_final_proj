@@ -60,8 +60,8 @@ transport_network
 #bay area origins
 origins = population_grid.copy()
 origins['id'] = origins['GEOID']
+origins = origins[['id', 'centroids']].copy()
 origins = origins.set_geometry('centroids')
-origins.head(3)
 
 #%%
 #bay area test destination create tt matrix
@@ -71,12 +71,15 @@ travel_times = r5py.TravelTimeMatrix(
     transport_network,
     origins=origins,
     destinations=destinations,
-    departure=dt.datetime(2026, 4, 14, 8, 30),
+    departure=dt.datetime(2026, 4, 7, 8, 30),
     transport_modes=[
         r5py.TransportMode.TRANSIT,
         r5py.TransportMode.WALK,
     ],
     snap_to_network=True,
+    max_time_walking=dt.timedelta(minutes=20),
+    max_time=dt.timedelta(minutes=120),
+    departure_time_window=dt.timedelta(minutes=10)
 )
 
 #%%
@@ -103,5 +106,6 @@ travel_times_mapping1.info()
 travel_times_mapping1[travel_times_mapping1['travel_time'].notna()].count()
 
 #%%
-travel_times_mapping1[travel_times_mapping1['travel_time'].notna()].explore("travel_time", cmap="Greens")
+travel_times_mapping1.explore("travel_time", cmap="Greens")
+#travel_times_mapping1[travel_times_mapping1['travel_time'].notna()].explore("travel_time", cmap="Greens")
 # %%
