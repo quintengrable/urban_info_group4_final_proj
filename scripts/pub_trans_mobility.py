@@ -58,7 +58,7 @@ transport_network
 
 #%%
 #bay area origins
-origins = population_grid.head(20).copy()
+origins = population_grid.copy()
 origins['id'] = origins['GEOID']
 origins = origins.set_geometry('centroids')
 origins.head(3)
@@ -80,7 +80,7 @@ travel_times = r5py.TravelTimeMatrix(
 )
 
 #%%
-travel_times.head(30)
+travel_times.head(100)
 
 #%%
 #create a map of the travel times
@@ -89,20 +89,19 @@ travel_times_mapping.head()
 
 #%%
 #save tt matrix to processed data folder
-pub_trans_tt_path = base_path / "data" / "processed" / "pub_trans_tt_mapping.csv"
-travel_times_mapping.to_csv(pub_trans_tt_path)
+pub_trans_tt_path = base_path / "data" / "processed" / "pub_trans_tt_mapping.parquet"
+travel_times_mapping.to_parquet(pub_trans_tt_path)
+
 #%%
 #read in tt matrix so we don't have to run all the above calulcations again
-pub_trans_tt_path = base_path / "data" / "processed" / "pub_trans_tt_mapping.csv"
-travel_times_mapping1 = gpd.read_file(pub_trans_tt_path)
+base_path = Path(__file__).parent.parent
+pub_trans_tt_path = base_path / "data" / "processed" / "pub_trans_tt_mapping.parquet"
+travel_times_mapping1 = gpd.read_parquet(pub_trans_tt_path)
 
 #%%
-travel_times_mapping1.head()
+travel_times_mapping1.info()
+travel_times_mapping1[travel_times_mapping1['travel_time'].notna()].count()
 
 #%%
-travel_times_mapping.head()
-#%%
-#travel_times = travel_times.set_geometry('geometry') 
-
-#%%
-travel_times_mapping.explore("travel_time", cmap="Greens")
+travel_times_mapping1[travel_times_mapping1['travel_time'].notna()].explore("travel_time", cmap="Greens")
+# %%
