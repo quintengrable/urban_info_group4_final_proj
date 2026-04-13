@@ -106,6 +106,12 @@ travel_times_mapping1.info()
 travel_times_mapping1[travel_times_mapping1['travel_time'].notna()].count()
 
 #%%
-travel_times_mapping1.explore("travel_time", cmap="Greens")
+m = travel_times_mapping1.explore("travel_time", 
+                                  cmap="Greens",
+                                  tiles="CartoDB positron",
+                                  )
+m 
 #travel_times_mapping1[travel_times_mapping1['travel_time'].notna()].explore("travel_time", cmap="Greens")
 # %%
+map_output_path = base_path / "visualizations" / "ferry_building_tt_map.html"
+m.save(map_output_path)
