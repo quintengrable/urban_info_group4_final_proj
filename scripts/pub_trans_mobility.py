@@ -115,3 +115,44 @@ m
 # %%
 map_output_path = base_path / "visualizations" / "ferry_building_tt_map.html"
 m.save(map_output_path)
+
+#%%
+(travel_times_mapping1[travel_times_mapping1['is_epc_2050']==True]).count()
+#294 EPCs
+
+#%%
+epc_grid = population_grid[population_grid['is_epc_2050']==True].copy().reset_index().drop(columns="index")
+epc_grid.info()
+
+#%%
+#bay area origins
+epc_origins = epc_grid.copy()
+epc_origins['id'] = epc_origins['GEOID']
+epc_origins = epc_origins[['id', 'centroids']].copy()
+epc_origins = epc_origins.set_geometry('centroids')
+
+#%%
+#EPC tt matrix
+destinations = ferry_building.copy()
+
+travel_times = r5py.TravelTimeMatrix(
+    transport_network,
+    origins=epc_origins,
+    destinations=destinations,
+    departure=dt.datetime(2026, 4, 7, 8, 30),
+    transport_modes=[
+        r5py.TransportMode.TRANSIT,
+        r5py.TransportMode.WALK,
+    ],
+    snap_to_network=True,
+    max_time_walking=dt.timedelta(minutes=20),
+    max_time=dt.timedelta(minutes=120),
+    departure_time_window=dt.timedelta(minutes=10)
+)
+
+#%%
+#create a map of the travel times
+travel_times_mapping = population_grid.merge(travel_times, left_on="GEOID", right_on="from_id")
+travel_times_mapping.head()
+
+#%%
