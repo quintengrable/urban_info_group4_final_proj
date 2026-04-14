@@ -78,7 +78,7 @@ travel_times = r5py.TravelTimeMatrix(
     ],
     snap_to_network=True,
     max_time_walking=dt.timedelta(minutes=20),
-    max_time=dt.timedelta(minutes=120),
+    max_time=dt.timedelta(minutes=180),
     departure_time_window=dt.timedelta(minutes=10)
 )
 
@@ -88,6 +88,11 @@ travel_times.head(100)
 #%%
 #create a map of the travel times
 travel_times_mapping = population_grid.merge(travel_times, left_on="GEOID", right_on="from_id")
+travel_times_mapping.head()
+
+#%%
+#destinations and origins swapped
+travel_times_mapping = population_grid.merge(travel_times, left_on="GEOID", right_on="to_id")
 travel_times_mapping.head()
 
 #%%
@@ -116,6 +121,8 @@ m
 map_output_path = base_path / "visualizations" / "ferry_building_tt_map.html"
 m.save(map_output_path)
 
+#%%
+################################################################################
 ################################################################################
 #%%
 #let's try with only epcs to see if computing is faster
@@ -134,13 +141,20 @@ epc_origins = epc_origins[['id', 'centroids']].copy()
 epc_origins = epc_origins.set_geometry('centroids')
 
 #%%
-#EPC tt matrix, ran faster but not in seconds
-destinations = ferry_building.copy()
+#destinations
+destinations = population_grid.copy()
+destinations['id'] = destinations['GEOID']
+destinations = destinations[['id', 'centroids']].copy()
+destinations = destinations.set_geometry('centroids')
+destinations.count()
+
+#%%
+#EPC tt matrix
 
 epc_travel_times = r5py.TravelTimeMatrix(
     transport_network,
-    origins=destinations,
-    destinations=epc_origins,
+    origins=epc_origins,
+    destinations=destinations,
     departure=dt.datetime(2026, 4, 7, 8, 30),
     transport_modes=[
         r5py.TransportMode.TRANSIT,
@@ -153,14 +167,52 @@ epc_travel_times = r5py.TravelTimeMatrix(
 )
 
 #%%
-#create a map of the travel times
-travel_times_mapping = epc_grid.merge(travel_times, left_on="GEOID", right_on="from_id")
-travel_times_mapping.head()
+epc_travel_times.info()
 
 #%%
-m = travel_times_mapping.explore("travel_time", 
-                                  cmap="Greens",
-                                  tiles="CartoDB positron",
-                                  )
+#save epc tt matrix
+epc_pubtrans_tt_path = base_path / "data" / "processed" / "epc_pubtrans_tt_mapping.parquet"
+epc_travel_times.to_parquet(epc_pubtrans_tt_path)
+#%%
+#filter matrix for actual od pairs here!!
+# read in epc od pairs
+base_path = Path(__file__).parent.parent
+epc_odpairs_path = base_path / "data" / "processed" / "epc_odpairs.parquet"
+epc_odpairs = gpd.read_parquet(epc_odpairs_path)
+
+#%%
+epc_odpairs.head()
+
+#%%
+# inner merge to filter travel time matrix to actual od pairs
+epc_odpair_travel_times = epc_odpairs.merge(
+    epc_travel_times, 
+    left_on=['home_tract', 'work_tract'], 
+    right_on=['from_id', 'to_id'], 
+    how='inner'
+)
+
+#%%
+epc_odpair_travel_times.info()
+
+#%%
+average_times = epc_odpair_travel_times.groupby('from_id')['travel_time'].mean().reset_index()
+
+print(average_times)
+
+#%%
+average_times.info()
+#%%
+#create a map of the travel times
+avg_epc_tt = epc_grid.merge(average_times, left_on="GEOID", right_on="from_id")
+avg_epc_tt.head()
+
+#%%
+m = avg_epc_tt.explore("travel_time", 
+                       cmap="Greens",
+                       tiles="CartoDB positron",
+                       )
 m 
 # %%
+map_output_path = base_path / "visualizations" / "avg_epc_tt_map.html"
+m.save(map_output_path)

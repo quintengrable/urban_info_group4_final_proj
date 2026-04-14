@@ -15,6 +15,7 @@ lodes_od_pairs = pd.read_parquet(lodes_od_path)
 
 #%%
 lodes_od_pairs.head()
+
 # %%
 # read in EPC data
 base_path = Path(__file__).parent.parent
@@ -25,29 +26,35 @@ epc_data = gpd.read_parquet(epc_data_path)
 epc_data.head()
 
 # %%
-epc_grid = epc_data[epc_data['is_epc_2050']==True].copy().reset_index()
-epc_grid = epc_grid.drop(columns=['index','daytime_pop','resident_pop','total_pop','within_tract','home_pop','work_pop','geoid','INTPTLON','INTPTLAT','FUNCSTAT'])
-epc_grid.head()
+# clean epc data
+epc_data = epc_data[epc_data['is_epc_2050']==True].copy().reset_index()
+epc_data = epc_data.drop(columns=['index','daytime_pop','resident_pop','total_pop','within_tract','home_pop','work_pop','geoid','INTPTLON','INTPTLAT','FUNCSTAT'])
+epc_data.head()
+
 # %%
-lodes_od_pairs = lodes_od_pairs.drop(columns=['SA01','SA02','SA03','SE01','SE02','SE03','SI01','SI02','SI03','index'])
+# clean lodes data
+lodes_od_pairs = lodes_od_pairs.drop(columns=['SA01','SA02','SA03','SE01','SE02','SE03','SI01','SI02','SI03','index','w_geocode','h_geocode','work_county','home_county'])
 lodes_od_pairs.head()
 
 #%%
-lodes_od_pairs.sample(10)
+# merge epc data with lodes od pairs
+epc_od_pairs = lodes_od_pairs.merge(epc_data, left_on="home_tract", right_on="GEOID")
+epc_od_pairs = epc_od_pairs.drop(columns=['is_epc_2050']) # all rows are epcs now
+
 #%%
-epc_od_pairs = lodes_od_pairs.merge(epc_grid, left_on="home_tract", right_on="GEOID")
-epc_od_pairs = epc_od_pairs.drop(columns=['is_epc_2050','within_tract','work_county','home_county','w_geocode','h_geocode'])
 epc_od_pairs.head()
+epc_od_pairs = gpd.GeoDataFrame(epc_od_pairs, geometry='geometry', crs="EPSG:4326")
 
 #%%
-result = epc_od_pairs.groupby('home_tract')['work_tract'].apply(list).reset_index()
-result.head()
-result.count()
+# save the data so it can be used in the pub_trans_mobility file
+base_path = Path(__file__).parent.parent
+epc_odpairs_path = base_path / "data" / "processed" / "epc_odpairs.parquet"
+epc_od_pairs.to_parquet(epc_odpairs_path)
 
 #%%
-unique_counts = epc_od_pairs.groupby('home_tract')['work_tract'].nunique().reset_index(name='unique_work_tracts')
-unique_counts.head(20)
-
+##########################################################
+##########################################################
+# top 5 tracts commuted to for each EPC
 #%%
 # Sum commuters for each OD pair
 od_counts = epc_od_pairs.groupby(['home_tract', 'work_tract'])['S000'].sum().reset_index()
