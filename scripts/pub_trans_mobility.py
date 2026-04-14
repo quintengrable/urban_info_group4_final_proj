@@ -69,8 +69,8 @@ destinations = ferry_building.copy()
 
 travel_times = r5py.TravelTimeMatrix(
     transport_network,
-    origins=origins,
-    destinations=destinations,
+    origins=destinations,
+    destinations=origins,
     departure=dt.datetime(2026, 4, 7, 8, 30),
     transport_modes=[
         r5py.TransportMode.TRANSIT,
@@ -116,7 +116,9 @@ m
 map_output_path = base_path / "visualizations" / "ferry_building_tt_map.html"
 m.save(map_output_path)
 
+################################################################################
 #%%
+#let's try with only epcs to see if computing is faster
 (travel_times_mapping1[travel_times_mapping1['is_epc_2050']==True]).count()
 #294 EPCs
 
@@ -125,20 +127,20 @@ epc_grid = population_grid[population_grid['is_epc_2050']==True].copy().reset_in
 epc_grid.info()
 
 #%%
-#bay area origins
+#epc origins
 epc_origins = epc_grid.copy()
 epc_origins['id'] = epc_origins['GEOID']
 epc_origins = epc_origins[['id', 'centroids']].copy()
 epc_origins = epc_origins.set_geometry('centroids')
 
 #%%
-#EPC tt matrix
+#EPC tt matrix, ran faster but not in seconds
 destinations = ferry_building.copy()
 
-travel_times = r5py.TravelTimeMatrix(
+epc_travel_times = r5py.TravelTimeMatrix(
     transport_network,
-    origins=epc_origins,
-    destinations=destinations,
+    origins=destinations,
+    destinations=epc_origins,
     departure=dt.datetime(2026, 4, 7, 8, 30),
     transport_modes=[
         r5py.TransportMode.TRANSIT,
@@ -152,7 +154,13 @@ travel_times = r5py.TravelTimeMatrix(
 
 #%%
 #create a map of the travel times
-travel_times_mapping = population_grid.merge(travel_times, left_on="GEOID", right_on="from_id")
+travel_times_mapping = epc_grid.merge(travel_times, left_on="GEOID", right_on="from_id")
 travel_times_mapping.head()
 
 #%%
+m = travel_times_mapping.explore("travel_time", 
+                                  cmap="Greens",
+                                  tiles="CartoDB positron",
+                                  )
+m 
+# %%
