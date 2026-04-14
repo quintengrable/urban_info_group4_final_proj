@@ -117,7 +117,7 @@ def plot_choropleth(
     return fig, ax
 
 #get path
-def get_path(parent: str, filename: str)-> str: 
+def get_path(folder: str, filename: str)-> str: 
     """
     Get path for importing files. 
 
@@ -133,7 +133,7 @@ def get_path(parent: str, filename: str)-> str:
     file_path 
         file path 
     """
-    parent_path = Path.cwd()/ ("data/" + parent) # test 
+    parent_path = Path.cwd().parent/ ("data/" + folder) # test 
     print("Data directory:", parent_path.resolve())
     file_path = os.path.join(parent_path, filename)
 
