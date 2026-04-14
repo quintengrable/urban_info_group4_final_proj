@@ -6,7 +6,17 @@ import osmnx as ox
 import networkx as nx
 from helper_function import get_path
 
-bay_area_counties = ['Alameda', 'Contra Costa', 'Marin', 'Napa', 'San Francisco', 'San Mateo', 'Santa Clara', 'Solano', 'Sonoma']
+bay_area_counties = [
+    'Alameda County, California',
+    'Contra Costa County, California',
+    'Marin County, California',
+    'Napa County, California',
+    'San Francisco County, California',
+    'San Mateo County, California',
+    'Santa Clara County, California',
+    'Solano County, California',
+    'Sonoma County, California'
+]
 graphs = {}
 
 print('downloading')
