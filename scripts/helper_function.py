@@ -123,7 +123,7 @@ def get_path(folder: str, filename: str)-> str:
 
     Parameters
     ----------
-    parent: str
+    folder: str
         "raw" or "processed", depending on what data you are working with 
     filename: str
         name of file with extension 
@@ -133,7 +133,7 @@ def get_path(folder: str, filename: str)-> str:
     file_path 
         file path 
     """
-    parent_path = Path.cwd().parent/ ("data/" + folder) # test 
+    parent_path = Path(__file__).parent.parent/ "data" / folder # test 
     print("Data directory:", parent_path.resolve())
     file_path = os.path.join(parent_path, filename)
 
