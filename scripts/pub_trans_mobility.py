@@ -1,5 +1,6 @@
 # %%
 import geopandas as gpd
+import pandas as pd
 import r5py
 import r5py.sampledata.helsinki
 import shapely
@@ -173,8 +174,17 @@ epc_travel_times.info()
 #save epc tt matrix
 epc_pubtrans_tt_path = base_path / "data" / "processed" / "epc_pubtrans_tt_mapping.parquet"
 epc_travel_times.to_parquet(epc_pubtrans_tt_path)
+
 #%%
-#filter matrix for actual od pairs here!!
+# read in epc tt matrix so we don't have to rerun computation
+base_path = Path(__file__).parent.parent
+epc_pubtrans_tt_path = base_path / "data" / "processed" / "epc_pubtrans_tt_mapping.parquet"
+epc_travel_times = pd.read_parquet(epc_pubtrans_tt_path)
+
+#%%
+#filter matrix for actual od pairs below!!
+
+#%%
 # read in epc od pairs
 base_path = Path(__file__).parent.parent
 epc_odpairs_path = base_path / "data" / "processed" / "epc_odpairs.parquet"
@@ -216,3 +226,37 @@ m
 # %%
 map_output_path = base_path / "visualizations" / "avg_epc_tt_map.html"
 m.save(map_output_path)
+
+
+
+
+
+
+
+
+# experimenting with desire lines
+#%%
+high_volume = epc_odpair_travel_times[epc_odpair_travel_times['S000'] > 5]
+high_volume.info()
+#%%
+import pydeck as pdk
+
+# 1. Prepare your lines (needs start and end coordinates)
+# Assuming you merged centroids into your masked_travel_times
+layer = pdk.Layer(
+    "ArcLayer",
+    epc_odpair_travel_times,
+    get_source_position="[home_lon, home_lat]",
+    get_target_position="[work_lon, work_lat]",
+    get_source_color=[255, 255, 0, 80],
+    get_target_color=[255, 0, 0, 80],
+    pickable=True, # This enables the hover effect
+    auto_highlight=True, # Highlights the line you are over
+    width_min_pixels=2,
+)
+
+view_state = pdk.ViewState(latitude=37.77, longitude=-122.41, zoom=10)
+r = pdk.Deck(layers=[layer], initial_view_state=view_state, tooltip=True,data=epc_odpair_travel_times.sample(50000))
+
+map_output_path = base_path / "visualizations" / "desire_lines.html"
+r.to_html(map_output_path)
