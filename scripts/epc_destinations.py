@@ -13,17 +13,11 @@ base_path = Path(__file__).parent.parent
 lodes_od_path = base_path / "data" / "processed" / "bay_area_lodes_od_table.parquet"
 lodes_od_pairs = pd.read_parquet(lodes_od_path)
 
-#%%
-lodes_od_pairs.head()
-
 # %%
 # read in EPC data
 base_path = Path(__file__).parent.parent
 epc_data_path = base_path / "data" / "processed" / "day_night_pop_change.parquet"
 epc_data = gpd.read_parquet(epc_data_path)
-
-#%%
-epc_data.head()
 
 # %%
 # clean epc data
@@ -40,11 +34,6 @@ lodes_od_pairs.head()
 # merge epc data with lodes od pairs
 epc_od_pairs = lodes_od_pairs.merge(epc_data, left_on="home_tract", right_on="GEOID")
 epc_od_pairs = epc_od_pairs.drop(columns=['is_epc_2050']) # all rows are epcs now
-
-#%%
-epc_od_pairs.info()
-
-#%%
 epc_od_pairs = gpd.GeoDataFrame(epc_od_pairs, geometry='geometry', crs="EPSG:4326")
 
 #%%
@@ -81,21 +70,12 @@ top_5_commute.head(21)
 ##########################################################
 # Calculate the neighbors of epc tracts
 #%%
-epc_data.head()
-
-#lodes_od_pairs.head()
-
-#%%
-#this will pull the data from the correct folder regardless of where cwd is
 base_path = Path(__file__).parent.parent
 pop_grid_path = base_path / "data" / "processed" / "day_night_pop_change.parquet"
 #pull in tract polygon geometry data
 population_grid = gpd.read_parquet(pop_grid_path)
 #clean dataset to only relevant columns
 population_grid = population_grid.drop(columns=['FUNCSTAT','INTPTLAT','INTPTLON','geoid','work_pop','home_pop','within_tract','resident_pop','daytime_pop'])
-
-#%%
-population_grid.head()
 
 # %%
 # create a function to find neighbors of EPCs that aren't EPCs
@@ -124,9 +104,6 @@ def get_neighboring_non_epcs(gdf:gpd.GeoDataFrame, epc_col:str='is_epc_2050', id
 neighbor_map_gdf = get_neighboring_non_epcs(population_grid)
 
 #%%
-neighbor_map_gdf.head()
-
-#%%
 # mapping neighbor non-epc tracts to verify function worked
 
 neighbor_map_gdf = get_neighboring_non_epcs(population_grid)
@@ -148,20 +125,12 @@ neighbor_map_gdf.explore(
 
 m
 
-#%%
 map_output_path = base_path / "visualizations" / "qg_testing.html"
 m.save(map_output_path)
-
-# %%
-neighbor_map_gdf.head()
 
 #%%
 # merge neighbor non-epc data with lodes od pairs
 neighbor_od_pairs = lodes_od_pairs.merge(neighbor_map_gdf, left_on="home_tract", right_on="GEOID_neighbor")
-
-#%%
-neighbor_od_pairs.info()
-# %%
 neighbor_od_pairs = gpd.GeoDataFrame(neighbor_od_pairs, geometry='geometry', crs="EPSG:4326")
 
 #%%
@@ -169,3 +138,4 @@ neighbor_od_pairs = gpd.GeoDataFrame(neighbor_od_pairs, geometry='geometry', crs
 base_path = Path(__file__).parent.parent
 neighbor_odpairs_path = base_path / "data" / "processed" / "neighbor_odpairs.parquet"
 neighbor_od_pairs.to_parquet(neighbor_odpairs_path)
+# %%
