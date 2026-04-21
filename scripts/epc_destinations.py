@@ -42,7 +42,9 @@ epc_od_pairs = lodes_od_pairs.merge(epc_data, left_on="home_tract", right_on="GE
 epc_od_pairs = epc_od_pairs.drop(columns=['is_epc_2050']) # all rows are epcs now
 
 #%%
-epc_od_pairs.head()
+epc_od_pairs.info()
+
+#%%
 epc_od_pairs = gpd.GeoDataFrame(epc_od_pairs, geometry='geometry', crs="EPSG:4326")
 
 #%%
@@ -101,8 +103,7 @@ population_grid.head()
 def get_neighboring_non_epcs(gdf:gpd.GeoDataFrame, epc_col:str='is_epc_2050', id_col:str='GEOID')->gpd.GeoDataFrame:
     # separate EPCs and non-EPCs
     epcs = gdf[gdf[epc_col] == True][[id_col, 'geometry']].copy()
-    non_epcs = gdf[gdf[epc_col] == False][[id_col, 'geometry']].copy()
-    
+    non_epcs = gdf[(gdf[epc_col] == False) & (gdf['total_pop'] > 0)][[id_col, 'geometry', 'total_pop']].copy()    
     # spatial join to find non-EPCs that neighbor EPCs
     neighbors_gdf = gpd.sjoin(
         non_epcs, 
@@ -115,6 +116,7 @@ def get_neighboring_non_epcs(gdf:gpd.GeoDataFrame, epc_col:str='is_epc_2050', id
     
     # remove duplicates
     neighbors_gdf = neighbors_gdf.drop_duplicates(subset=[f'{id_col}_neighbor'])
+    neighbors_gdf = neighbors_gdf.reset_index().drop(columns=['index_epc','GEOID_epc','index'])
     
     return neighbors_gdf
 
@@ -122,54 +124,48 @@ def get_neighboring_non_epcs(gdf:gpd.GeoDataFrame, epc_col:str='is_epc_2050', id
 neighbor_map_gdf = get_neighboring_non_epcs(population_grid)
 
 #%%
-import matplotlib.pyplot as plt
-
-# 1. Run your function to get the neighbors
-neighbor_map_gdf = get_neighboring_non_epcs(population_grid)
-
-# 2. Setup the figure
-fig, ax = plt.subplots(figsize=(12, 12))
-
-# Layer 1: Plot ALL tracts in light gray as a background
-population_grid.plot(ax=ax, color='whitesmoke', edgecolor='lightgray', linewidth=0.5)
-
-# Layer 2: Plot the EPCs in a distinct color (e.g., Orange)
-population_grid[population_grid['is_epc_2050'] == True].plot(
-    ax=ax, color='orange', alpha=0.7, label='EPC Tracts'
-)
-
-# Layer 3: Plot your neighbors in a contrasting color (e.g., Blue)
-neighbor_map_gdf.plot(
-    ax=ax, color='royalblue', edgecolor='white', linewidth=1, label='Non-EPC Neighbors'
-)
-
-# Formatting
-ax.set_title("Bay Area EPCs and their Non-EPC Neighbors", fontsize=15)
-ax.set_axis_off() # Removes latitude/longitude coordinates for a cleaner look
-plt.show()
+neighbor_map_gdf.head()
 
 #%%
-# 1. Generate the neighbor GeoDataFrame using your function
+# mapping neighbor non-epc tracts to verify function worked
+
 neighbor_map_gdf = get_neighboring_non_epcs(population_grid)
 
-# 2. Create the base map with the EPCs (The "Source")
-# We'll color them orange to represent the priority areas
 m = population_grid[population_grid['is_epc_2050'] == True].explore(
     color="orange",
     style_kwds={'fillOpacity': 0.5, 'color': 'black', 'weight': 1},
     name="EPC Tracts",
-    tooltip=["GEOID", "is_epc_2050"] # Shows these details on hover
+    tooltip=["GEOID", "is_epc_2050"]
 )
 
-# 3. Add the Neighbors layer (The "Result")
-# We'll use blue to highlight the tracts your function found
 neighbor_map_gdf.explore(
-    m=m, # This tells geopandas to draw on the same map 'm'
+    m=m,
     color="royalblue",
     style_kwds={'fillOpacity': 0.7, 'color': 'white', 'weight': 2},
     name="Non-EPC Neighbors",
     tooltip=["GEOID_neighbor"]
 )
 
-# 4. Display the map
 m
+
+#%%
+map_output_path = base_path / "visualizations" / "qg_testing.html"
+m.save(map_output_path)
+
+# %%
+neighbor_map_gdf.head()
+
+#%%
+# merge neighbor non-epc data with lodes od pairs
+neighbor_od_pairs = lodes_od_pairs.merge(neighbor_map_gdf, left_on="home_tract", right_on="GEOID_neighbor")
+
+#%%
+neighbor_od_pairs.info()
+# %%
+neighbor_od_pairs = gpd.GeoDataFrame(neighbor_od_pairs, geometry='geometry', crs="EPSG:4326")
+
+#%%
+# save the data so it can be used in the pub_trans_mobility file
+base_path = Path(__file__).parent.parent
+neighbor_odpairs_path = base_path / "data" / "processed" / "neighbor_odpairs.parquet"
+neighbor_od_pairs.to_parquet(neighbor_odpairs_path)
