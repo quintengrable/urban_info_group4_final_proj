@@ -11,11 +11,9 @@ from pathlib import Path
 #this will pull the data from the correct folder regardless of where cwd is
 base_path = Path(__file__).parent.parent
 data_file = base_path / "data" / "processed" / "day_night_pop_change.parquet"
-
-#%%
-#pull in data from previous analyses
+#pull in population data from previous analyses
 population_grid = gpd.read_parquet(data_file)
-population_grid.head()
+#population_grid.head()
 
 #%%
 #clean dataset to only relevant columns
@@ -84,17 +82,8 @@ travel_times = r5py.TravelTimeMatrix(
 )
 
 #%%
-travel_times.head(100)
-
-#%%
 #create a map of the travel times
 travel_times_mapping = population_grid.merge(travel_times, left_on="GEOID", right_on="from_id")
-travel_times_mapping.head()
-
-#%%
-#destinations and origins swapped
-travel_times_mapping = population_grid.merge(travel_times, left_on="GEOID", right_on="to_id")
-travel_times_mapping.head()
 
 #%%
 #save tt matrix to processed data folder
@@ -125,11 +114,7 @@ m.save(map_output_path)
 #%%
 ################################################################################
 ################################################################################
-#%%
-#let's try with only epcs to see if computing is faster
-(travel_times_mapping1[travel_times_mapping1['is_epc_2050']==True]).count()
-#294 EPCs
-
+# create tt matrix for EPCs
 #%%
 epc_grid = population_grid[population_grid['is_epc_2050']==True].copy().reset_index().drop(columns="index")
 epc_grid.info()
@@ -225,4 +210,117 @@ m = avg_epc_tt.explore("travel_time",
 m 
 # %%
 map_output_path = base_path / "visualizations" / "avg_epc_tt_map.html"
+m.save(map_output_path)
+
+#%%
+#######################################################################
+#######################################################################
+# now create tt matric for non-EPC neighbors of EPCs
+#%%
+# read in neighbor tracts
+base_path = Path(__file__).parent.parent
+neighbor_tracts_path = base_path / "data" / "processed" / "neighbor_tracts.parquet"
+neighbor_tracts = gpd.read_parquet(neighbor_tracts_path)
+
+#%%
+#get centroids of neighbor tracts
+neighbor_tracts = neighbor_tracts.to_crs(epsg=2227)
+neighbor_tracts['centroids'] = neighbor_tracts.geometry.centroid
+neighbor_tracts = neighbor_tracts.set_geometry('geometry')
+neighbor_tracts = neighbor_tracts.to_crs(epsg=4326)
+
+#%%
+# non-epc neighbor origins
+neighbor_tract_origins = neighbor_tracts.copy()
+neighbor_tract_origins['id'] = neighbor_tract_origins['GEOID_neighbor']
+neighbor_tract_origins = neighbor_tract_origins[['id', 'centroids']].copy()
+neighbor_tract_origins = neighbor_tract_origins.set_geometry('centroids')
+
+#%%
+population_grid.head()
+#%%
+#destinations
+destinations = population_grid.copy()
+destinations['id'] = destinations['GEOID']
+destinations = destinations[['id', 'centroids']].copy()
+destinations = destinations.set_geometry('centroids')
+destinations.count()
+
+#%%
+# neighbors tt matrix
+
+neighbor_travel_times = r5py.TravelTimeMatrix(
+    transport_network,
+    origins=neighbor_tract_origins,
+    destinations=destinations,
+    departure=dt.datetime(2026, 4, 7, 8, 30),
+    transport_modes=[
+        r5py.TransportMode.TRANSIT,
+        r5py.TransportMode.WALK,
+    ],
+    snap_to_network=True,
+    max_time_walking=dt.timedelta(minutes=20),
+    max_time=dt.timedelta(minutes=120),
+    departure_time_window=dt.timedelta(minutes=10)
+)
+
+#%%
+neighbor_travel_times.info()
+
+#%%
+#save epc tt matrix
+neighbor_pubtrans_tt_path = base_path / "data" / "processed" / "neighbor_pubtrans_tt_mapping.parquet"
+neighbor_travel_times.to_parquet(neighbor_pubtrans_tt_path)
+
+#%%
+# read in epc tt matrix so we don't have to rerun computation
+base_path = Path(__file__).parent.parent
+neighbor_pubtrans_tt_path = base_path / "data" / "processed" / "neighbor_pubtrans_tt_mapping.parquet"
+neighbor_travel_times = pd.read_parquet(neighbor_pubtrans_tt_path)
+
+#%%
+############################################################################
+#filter matrix for actual od pairs below!!
+
+#%%
+# read in neighbor od pairs
+base_path = Path(__file__).parent.parent
+neighbor_odpairs_path = base_path / "data" / "processed" / "neighbor_odpairs.parquet"
+neighbor_odpairs = gpd.read_parquet(neighbor_odpairs_path)
+
+#%%
+neighbor_odpairs.head()
+
+#%%
+# inner merge to filter travel time matrix to actual od pairs
+neighbor_odpair_travel_times = neighbor_odpairs.merge(
+    neighbor_travel_times, 
+    left_on=['home_tract', 'work_tract'], 
+    right_on=['from_id', 'to_id'], 
+    how='inner'
+)
+
+#%%
+neighbor_odpair_travel_times.info()
+
+#%%
+neighbor_average_times = neighbor_odpair_travel_times.groupby('from_id')['travel_time'].mean().reset_index()
+
+print(neighbor_average_times)
+
+#%%
+neighbor_average_times.info()
+#%%
+#create a map of the travel times
+avg_neighbor_tt = neighbor_tract_origins.merge(neighbor_average_times, left_on="GEOID", right_on="from_id")
+avg_neighbor_tt.head()
+
+#%%
+m = avg_neighbor_tt.explore("travel_time", 
+                       cmap="Greens",
+                       tiles="CartoDB positron",
+                       )
+m 
+# %%
+map_output_path = base_path / "visualizations" / "avg_neighbor_tt_map.html"
 m.save(map_output_path)

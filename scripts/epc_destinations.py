@@ -102,7 +102,10 @@ def get_neighboring_non_epcs(gdf:gpd.GeoDataFrame, epc_col:str='is_epc_2050', id
 
 #%%
 neighbor_map_gdf = get_neighboring_non_epcs(population_grid)
-
+# save the data so it can be used in the pub_trans_mobility file
+base_path = Path(__file__).parent.parent
+neighbor_tracts_path = base_path / "data" / "processed" / "neighbor_tracts.parquet"
+neighbor_map_gdf.to_parquet(neighbor_tracts_path)
 #%%
 # mapping neighbor non-epc tracts to verify function worked
 
