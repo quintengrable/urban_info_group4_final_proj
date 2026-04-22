@@ -323,7 +323,15 @@ avg_neighbor_tt = neighbor_tracts.merge(neighbor_average_times, left_on="GEOID_n
 avg_neighbor_tt.head()
 #%%
 avg_neighbor_tt['travel_time'] = avg_neighbor_tt['travel_time'].round(2)
-avg_neighbor_tt.head()
+avg_neighbor_tt.info()
+
+#%%
+# drop rows where travel time was zero
+avg_neighbor_tt = avg_neighbor_tt[avg_neighbor_tt['travel_time'] != 0]
+
+#%%
+avg_neighbor_tt.info()
+
 #%%
 m = avg_neighbor_tt.explore("travel_time", 
                        cmap="Oranges",
@@ -335,36 +343,31 @@ m
 map_output_path = base_path / "visualizations" / "avg_neighbor_tt_map.html"
 m.save(map_output_path)
 # %%
-
-
-
-
-# 1. Create the base map with the first dataset
+###########################################################################
+# plot EPCs and neighbors together
 m = avg_neighbor_tt.explore(
     column="travel_time", 
     cmap="Oranges",
     tiles="CartoDB positron",
     tooltip=["travel_time", "GEOID_neighbor", "total_pop"],
-    name="Neighbor Tracts", # Label for the layer toggle
-    marker_kwds={"radius": 3}
+    name="Neighbor Tracts", # layer label
 )
 
-# 2. Layer the second dataset on top by passing m=m
 m = avg_epc_tt.explore(
     column="travel_time", 
     cmap="Greens",
     tooltip=["travel_time", "GEOID", "total_pop"],
-    m=m,                    # Important: This links to the map above
-    name="EPC Tracts",      # Label for the layer toggle
-    marker_kwds={"radius": 5, "stroke": True, "weight": 1} # Slightly larger to stand out
+    m=m,                    
+    name="EPC Tracts",      # layer label
 )
 
-# 3. Add a layer control so you can toggle them on/off in the top-right corner
+# toggle layers
 import folium
 folium.LayerControl().add_to(m)
 
-# 4. Display the map
 m
 
+# save map
 map_output_path = base_path / "visualizations" / "avg_epc_neigh_tt_map.html"
 m.save(map_output_path)
+# %%
