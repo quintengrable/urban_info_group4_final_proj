@@ -6,6 +6,8 @@ import r5py.sampledata.helsinki
 import shapely
 import datetime as dt
 from pathlib import Path
+import folium
+import matplotlib.pyplot as plt
 
 #%%
 #this will pull the data from the correct folder regardless of where cwd is
@@ -362,7 +364,6 @@ m = avg_epc_tt.explore(
 )
 
 # toggle layers
-import folium
 folium.LayerControl().add_to(m)
 
 m
@@ -371,3 +372,64 @@ m
 map_output_path = base_path / "visualizations" / "avg_epc_neigh_tt_map.html"
 m.save(map_output_path)
 # %%
+#################################################################
+#%%
+avg_neighbor_tt_all = avg_neighbor_tt['travel_time'].mean()
+avg_neighbor_tt_all = avg_neighbor_tt_all.round(2)
+avg_neighbor_tt_all
+
+# %%
+avg_epc_tt_all = avg_epc_tt['travel_time'].mean()
+avg_epc_tt_all = avg_epc_tt_all.round(2)
+avg_epc_tt_all
+
+#%%
+# compare average mobility per county
+neigh_tt_by_county = avg_neighbor_tt.copy()
+neigh_tt_by_county['county'] = neigh_tt_by_county['GEOID_neighbor'].str[:5]
+neigh_county_avg = neigh_tt_by_county.groupby('county')['travel_time'].mean().copy()
+neigh_county_avg
+
+#%%
+epc_tt_by_county = avg_epc_tt.copy()
+epc_tt_by_county['county'] = epc_tt_by_county['GEOID'].str[:5]
+epc_county_avg = epc_tt_by_county.groupby('county')['travel_time'].mean().copy()
+epc_county_avg
+
+#%%
+# dictionary of Bay Area counties
+bay_geocode_map = {'06001': 'Alameda',
+                     '06013': 'Contra Costa',
+                     '06041': 'Marin',
+                     '06055': 'Napa',
+                     '06075': 'San Francisco',
+                     '06081': 'San Mateo',
+                     '06085': 'Santa Clara',
+                     '06095': 'Solano',
+                     '06097': 'Sonoma',
+                     }
+
+
+county_tt_plot = pd.DataFrame({
+    'EPC Average': epc_county_avg,
+    'Neighbor Average': neigh_county_avg
+})
+
+county_tt_plot['county_name'] = county_tt_plot.index.map(bay_geocode_map)
+
+print(county_tt_plot.head(10))
+
+#%%
+county_tt_plot.set_index('county_name').plot(kind='barh', figsize=(12, 8))
+
+plt.title('Travel Time Comparison by County')
+plt.xlabel('Average Travel Time')
+plt.ylabel('County')
+plt.legend()
+plt.tight_layout()
+
+save_path = base_path / "visualizations" / "county_avg_tt.png"
+plt.savefig(save_path, dpi=300, bbox_inches='tight')
+
+plt.show()
+#%%
