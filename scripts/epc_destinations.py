@@ -137,8 +137,19 @@ neighbor_od_pairs = lodes_od_pairs.merge(neighbor_map_gdf, left_on="home_tract",
 neighbor_od_pairs = gpd.GeoDataFrame(neighbor_od_pairs, geometry='geometry', crs="EPSG:4326")
 
 #%%
+neighbor_od_pairs = neighbor_od_pairs.drop(columns=['within_tract',
+                                                    'total_pop',
+                                                    'GEOID_neighbor'
+                                                    ])
+
+#%%
+neighbor_od_pairs['geometry'] = neighbor_od_pairs.geometry.centroid
+neighbor_od_pairs = neighbor_od_pairs.drop(columns=['geometry'])
+
+neighbor_od_pairs.info()
+#%%
 # save the data so it can be used in the pub_trans_mobility file
 base_path = Path(__file__).parent.parent
 neighbor_odpairs_path = base_path / "data" / "processed" / "neighbor_odpairs.parquet"
-neighbor_od_pairs.to_parquet(neighbor_odpairs_path)
+neighbor_od_pairs.to_parquet(neighbor_odpairs_path, index=False)
 # %%
