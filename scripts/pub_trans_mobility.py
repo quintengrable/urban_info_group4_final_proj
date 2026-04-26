@@ -2,7 +2,7 @@
 import geopandas as gpd
 import pandas as pd
 import r5py
-import r5py.sampledata.helsinki
+#import r5py.sampledata.helsinki
 import shapely
 import datetime as dt
 from pathlib import Path
