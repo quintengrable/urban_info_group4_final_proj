@@ -1,5 +1,5 @@
 #installing & importing
-!pip install -r requirements.txt
+# !pip install -r requirements.txt
 import pandas as pd
 import geopandas as gpd
 from census import Census
@@ -58,7 +58,7 @@ departure_times_raw = pd.DataFrame(
     ))
 
 #Save the raw data
-departure_times_raw.to_csv("../data/acs5_2023_Bay_Area_departure_times_raw.csv",index=False)
+departure_times_raw.to_csv("data/raw/acs5_2023_Bay_Area_departure_times_raw.csv",index=False)
 
 #Starting to clean the ACS data
 #load data with renamed columns
@@ -78,7 +78,7 @@ departure_times_cleaned["GEOID"] = departure_times_cleaned["GEO_ID"].str[-11:]
 departure_times_cleaned.drop("GEO_ID", axis = 1, inplace = True)
 
 #Now to save the cleaned ACS data
-departure_times_cleaned.to_csv("../data/acs5_2023_Bay_Area_departure_times_cleaned.csv",index=False)
+departure_times_cleaned.to_csv("data/processed/acs5_2023_Bay_Area_departure_times_cleaned.csv",index=False)
 
 import sys
 import os
@@ -99,12 +99,12 @@ lodes8_2023_od = get_lodes(state = "CA", year = 2023, lodes_type = "od") # creat
 
 # save LODES raw data as a parquet file:
 # variable containing path string and name
-lodes8_2023_od_table_path = "../data/lodes8_2023_od_table_raw.parquet"
+lodes8_2023_od_table_path = "data/lodes8_2023_od_table_raw.parquet"
 # saving LODES raw data
 lodes8_2023_od.to_parquet(lodes8_2023_od_table_path)
 
 # load in raw data from saved parquet file
-lodes8_2023_od = pd.read_parquet("../data/lodes8_2023_od_table_raw.parquet")
+lodes8_2023_od = pd.read_parquet("data/lodes8_2023_od_table_raw.parquet")
 
 parent_path = Path.cwd().parent / "data/raw"
 filename = "lodes8_2023_od_table_raw.parquet"
@@ -207,5 +207,5 @@ county_codes = ['001', '013', '041', '055', '075', '081', '085', '095', '097']
 bay_counties = california[california["COUNTYFP"].isin(county_codes)]
 
 #saving the reprojected & cleaned bay counties to a parquet file
-bay_counties.to_parquet("../data/bay_counties.parquet")
-bay_counties.to_parquet("../data/processed/bay_counties_cleaned.parquet")
+bay_counties.to_parquet("data/bay_counties.parquet")
+bay_counties.to_parquet("data/processed/bay_counties_cleaned.parquet")
