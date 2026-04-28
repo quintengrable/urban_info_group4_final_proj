@@ -1,6 +1,9 @@
 # urban_info_group4_final_proj
 Final project repository for Group 4 for Urban Informatics and Visualization
 
+This project takes LODES OD Pair Data and ACS Census Tract Population Data and uses it to learn about mobility insights of Bay Area Commuters. There is a special
+emphasis on equity priority communities (EPCs) and calculating if the locations they commute to work by car and public transit take longer than the residents of neighboring non-EPC tracts.
+
 # Data
 Please note that our project has several files larger than the 50 MB limit to upload to GitHub. Monica has directed us to make a note of that here and to include those large files in our final submission ZIP folder. 
 
