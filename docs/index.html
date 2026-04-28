@@ -167,6 +167,100 @@
       color: rgba(255,255,255,0.32);
       font-style: italic;
     }
+    
+    /* METHODS */
+    .methods-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 36px 0 24px;
+    }
+    @media (max-width: 620px) { .methods-grid { grid-template-columns: 1fr; } }
+
+    .method-block {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 28px;
+    }
+    .method-icon {
+      font-size: 22px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    .method-block h3 {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--moss-mid);
+      margin-bottom: 10px;
+    }
+    .method-block p {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+    .method-caveat {
+      border-top: 1px solid var(--rule);
+      padding-top: 12px;
+      font-size: 13px;
+      color: #888;
+      line-height: 1.6;
+    }
+    .caveat-label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 6px;
+    }
+
+    /* METHODS DETAIL (collapsible) */
+    .methods-detail {
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .methods-detail summary {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--moss-mid);
+      padding: 16px 22px;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      user-select: none;
+    }
+    .methods-detail summary::-webkit-details-marker { display: none; }
+    .methods-detail summary::before {
+      content: '+';
+      font-size: 16px;
+      color: var(--amber);
+      font-weight: 300;
+      transition: transform 0.2s;
+    }
+    .methods-detail[open] summary::before { content: '−'; }
+    .methods-detail-inner {
+      padding: 0 22px 20px;
+      background: #fff;
+      border-top: 1px solid var(--rule);
+    }
+    .methods-detail-inner p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.75;
+      margin-top: 14px;
+    }
 
     /* LAYOUT */
     main { max-width: 860px; margin: 0 auto; padding: 0 2.5rem; }
@@ -221,6 +315,37 @@
       font-style: italic;
       color: var(--ink);
       line-height: 1.55;
+    }
+
+    /* SECTION CAVEAT */
+    .section-caveat {
+      margin-top: 24px;
+      padding: 20px 24px;
+      border-radius: 6px;
+      background: rgba(15,26,20,0.03);
+      border: 1px solid var(--rule);
+    }
+    .caveat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 620px) { .caveat-row { grid-template-columns: 1fr; } }
+
+    .section-caveat .caveat-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+    .section-caveat p {
+      font-size: 13px;
+      color: #777;
+      line-height: 1.7;
+      margin: 0;
     }
 
     /* FIGURES */
@@ -371,6 +496,36 @@
       border-radius: 3px;
       color: #888;
     }
+    .source-group--repo {
+      border-top: 1px solid var(--rule);
+      padding-top: 20px;
+      width: 100%;
+    }
+    .repo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: var(--moss-mid);
+      text-decoration: none;
+      font-weight: 500;
+      margin-bottom: 10px;
+      transition: color 0.2s;
+    }
+    .repo-link:hover { color: var(--moss); }
+    .repo-note {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.6;
+      max-width: 480px;
+    }
+    .repo-note code {
+      font-size: 11px;
+      background: #eae7de;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #888;
+    }
 
     /* DIVIDER */
     .rule { border: none; border-top: 1px solid var(--rule); margin: 64px 0 0; }
@@ -406,14 +561,10 @@
   <header class="hero">
     <div class="hero-inner">
       <p class="hero-kicker">CYPLAN 255 · Urban Informatics & Visualization · Spring 2026</p>
-      <h1>Who bears the burden of the Bay Area's <em>geography of work?</em></h1>
+      <h1>Research question!</h1>
       <p class="hero-sub">
-        Jobs and homes in the Bay Area are not in the same place. Every workday, millions of people commute to get to work, but the distribution and length of those commutes are not shared equally.
+        Research sub questions! Research sub questions! Research sub questions! Research sub questions! 
       </p>
-      <div class="hero-stat">
-        <div class="stat-num">X<sup>minutes</sup></div>
-        <p class="stat-desc">longer transit commute for Equity Priority Community residents vs non-EPC residents</p>
-      </div>
     </div>
   </header>
 
@@ -424,6 +575,71 @@
   </div>
 
   <main>
+
+    <!-- 00 DATA & METHODS -->
+    <section class="section fade-in" id="methods">
+      <p class="section-number">00 — Data & Methods</p>
+      <h2>How we built this</h2>
+      <p class="intro-text">
+        Every analytical choice shapes what the data can and cannot tell us. Here is what we used, why we used it, and where it falls short.
+      </p>
+
+      <div class="methods-grid">
+
+        <div class="method-block">
+          <div class="method-icon">⬡</div>
+          <h3>Spatial unit</h3>
+          <p>We aggregated all data to the <strong>census tract</strong> level. (Why census tract rather than block group or ZIP — e.g. outcome variable only available at this resolution, small cell count instability at finer scale, etc.)</p>
+          <div class="method-caveat">
+            <span class="caveat-label">MAUP note</span>
+            Results could differ at a coarser or finer scale. A pattern visible at the tract level may weaken or reverse at the block group level. (Reflect here on direction of likely change.)
+          </div>
+        </div>
+
+        <div class="method-block">
+          <div class="method-icon">⇄</div>
+          <h3>Origin-destination data</h3>
+          <p><strong>LODES8</strong> — (Which year. What it captures: workplace-residential pairs for covered workers. What it doesn't: self-employed, remote workers, federal employees, informal work.)</p>
+          <div class="method-caveat">
+            <span class="caveat-label">Coverage note</span>
+            (Note on which workers are systematically undercounted and whether that is likely to bias EPC vs non-EPC comparisons.)
+          </div>
+        </div>
+
+        <div class="method-block">
+          <div class="method-icon">🕐</div>
+          <h3>Commute time data</h3>
+          <p><strong>(ACS Table ID)</strong>, (year range). (Why ACS self-reported travel time rather than modelled travel times — e.g. reflects actual reported experience, available at tract level, consistent with LODES geography. Or if modelled: why modelled rather than reported.)</p>
+          <div class="method-caveat">
+            <span class="caveat-label">Limitation</span>
+            ACS travel time is self-reported and aggregated; it does not distinguish trip purpose, time of day, or transfer complexity.
+          </div>
+        </div>
+
+        <div class="method-block">
+          <div class="method-icon">◎</div>
+          <h3>Equity Priority Communities</h3>
+          <p><strong>MTC EPC shapefile</strong>, (vintage year). EPCs are census tracts identified by MTC as facing compounding disadvantages across income, pollution burden, car ownership, and access to opportunity. We joined EPC designation to LODES tracts by GEOID.</p>
+          <div class="method-caveat">
+            <span class="caveat-label">Ecological fallacy note</span>
+            EPC designation is a tract-level attribute. Findings about EPC tracts do not necessarily hold for every individual within them.
+          </div>
+        </div>
+
+      </div>
+
+      <details class="methods-detail">
+        <summary>Data cleaning & missing values</summary>
+        <div class="methods-detail-inner">
+          <p>(How many tract-level rows in the raw LODES file. How many dropped or excluded and why — e.g. tracts with zero workers, water-only tracts, tracts outside the nine-county Bay Area.)</p>
+          <p>(Which dark data type applies to the missing observations — e.g. are tracts with missing ACS commute data missing at random, or systematically in lower-population tracts? State the type and explain your reasoning.)</p>
+          <p>(What you did with missing values: dropped / imputed / flagged. Why that choice was most defensible given the dark data type identified.)</p>
+        </div>
+      </details>
+
+    </section>
+
+    <hr class="rule">
 
     <!-- 01 SETTING THE SCENE: DAYTIME POPULATION -->
     <section class="section fade-in" id="scene">
@@ -453,6 +669,19 @@
       </div>
     </section>
 
+    <div class="section-caveat">
+      <div class="caveat-row">
+        <div class="caveat-col">
+          <span class="caveat-label">What this doesn't tell us</span>
+          <p>(Caveat specific to this section's finding — e.g. net worker change reflects covered LODES workers only; self-employed and remote workers are excluded, which may disproportionately affect certain tract types.)</p>
+        </div>
+        <div class="caveat-col">
+          <span class="caveat-label">Follow-up question</span>
+          <p>(One question this result raises but the analysis doesn't answer — e.g. Has the spatial mismatch between EPC residents and job centres grown or shrunk since 2019?)</p>
+        </div>
+      </div>
+    </div>
+
     <hr class="rule">
 
     <!-- 02 THE FLOW OF COMMUTERS -->
@@ -480,6 +709,19 @@
         <p>These flows represent millions of commutes every workday. Is the burden of these commute flows shared evenly between workers, or does it fall harder on some residents than others?</p>
       </div>
     </section>
+
+    <div class="section-caveat">
+      <div class="caveat-row">
+        <div class="caveat-col">
+          <span class="caveat-label">What this doesn't tell us</span>
+          <p>(Caveat specific to this section's finding — e.g. net worker change reflects covered LODES workers only; self-employed and remote workers are excluded, which may disproportionately affect certain tract types.)</p>
+        </div>
+        <div class="caveat-col">
+          <span class="caveat-label">Follow-up question</span>
+          <p>(One question this result raises but the analysis doesn't answer — e.g. Has the spatial mismatch between EPC residents and job centres grown or shrunk since 2019?)</p>
+        </div>
+      </div>
+    </div>
 
     <hr class="rule">
 
@@ -511,6 +753,19 @@
       </div>
     </section>
 
+    <div class="section-caveat">
+      <div class="caveat-row">
+        <div class="caveat-col">
+          <span class="caveat-label">What this doesn't tell us</span>
+          <p>(Caveat specific to this section's finding — e.g. net worker change reflects covered LODES workers only; self-employed and remote workers are excluded, which may disproportionately affect certain tract types.)</p>
+        </div>
+        <div class="caveat-col">
+          <span class="caveat-label">Follow-up question</span>
+          <p>(One question this result raises but the analysis doesn't answer — e.g. Has the spatial mismatch between EPC residents and job centres grown or shrunk since 2019?)</p>
+        </div>
+      </div>
+    </div>
+
     <hr class="rule">
 
     <!-- 04 THE COMMUTE ITSELF -->
@@ -529,7 +784,14 @@
         </div>
         <p class="fig-caption">Figure 6. Commute destinations for workers residing in EPC tracts. SOURCE SOURCE SOURCE.</p>
       </div>
-
+      <div class="fig">
+          <iframe src="../visualizations/avg_epc_neigh_tt_map.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
+        <p class="fig-caption">Figure 7. Average travel time to work for EPC tracts and their neighbors.</p>
+      </div>
+      <div class="fig">
+           <img src="../visualizations/county_avg_tt.png" alt="Description of map" style="width:100%; border-radius:8px;">
+        <p class="fig-caption">Figure 8. Average travel time to work for EPC tracts and their neighbors, for each county in the Bay Area</p>
+      </div>
       <div class="two-up">
         <div class="fig">
           <div class="fig-placeholder">
@@ -551,6 +813,19 @@
         <p>Although absolute car and transit travel times can give us some insights, the <em>gap</em> between the transit and car commute lengths reveals how well the transit network serves it's most disadvantaged residents.</p>
       </div>
     </section>
+
+    <div class="section-caveat">
+      <div class="caveat-row">
+        <div class="caveat-col">
+          <span class="caveat-label">What this doesn't tell us</span>
+          <p>(Caveat specific to this section's finding — e.g. net worker change reflects covered LODES workers only; self-employed and remote workers are excluded, which may disproportionately affect certain tract types.)</p>
+        </div>
+        <div class="caveat-col">
+          <span class="caveat-label">Follow-up question</span>
+          <p>(One question this result raises but the analysis doesn't answer — e.g. Has the spatial mismatch between EPC residents and job centres grown or shrunk since 2019?)</p>
+        </div>
+      </div>
+    </div>
 
     <hr class="rule">
 
@@ -594,6 +869,19 @@
       </div>
     </section>
 
+    <div class="section-caveat">
+      <div class="caveat-row">
+        <div class="caveat-col">
+          <span class="caveat-label">What this doesn't tell us</span>
+          <p>(Caveat specific to this section's finding — e.g. net worker change reflects covered LODES workers only; self-employed and remote workers are excluded, which may disproportionately affect certain tract types.)</p>
+        </div>
+        <div class="caveat-col">
+          <span class="caveat-label">Follow-up question</span>
+          <p>(One question this result raises but the analysis doesn't answer — e.g. Has the spatial mismatch between EPC residents and job centres grown or shrunk since 2019?)</p>
+        </div>
+      </div>
+    </div>
+
     <!-- CONCLUSION -->
     <section class="conclusion fade-in">
       <p class="section-number">Conclusion</p>
@@ -611,14 +899,14 @@
       </div>
     </section>
 
-    <!-- DATA SOURCES -->
+    <!-- DATA SOURCES + REPO -->
     <div class="sources">
       <div class="source-group">
         <h4>Data sources</h4>
         <ul>
           <li>LODES8 Origin-Destination Employment Statistics &nbsp;<code>census.gov/lehd</code></li>
-          <li>(SPECIFIC ACS TABLE) &nbsp;<code>data.census.gov</code></li>
-          <li>MTC Equity Priority Communities shapefile &nbsp;<code>mtc.ca.gov</code></li>
+          <li>(ACS Table ID) American Community Survey &nbsp;<code>data.census.gov</code></li>
+          <li>MTC Equity Priority Communities shapefile, (year) &nbsp;<code>mtc.ca.gov</code></li>
         </ul>
       </div>
       <div class="source-group">
@@ -628,6 +916,23 @@
           <li>Folium · Plotly</li>
           <li>CYPLAN 255, UC Berkeley, Spring 2026</li>
         </ul>
+      </div>
+      <div class="source-group source-group--repo">
+        <h4>Code & reproducibility</h4>
+        <a class="repo-link" href="https://github.com/quintengrable/urban_info_group4_final_proj" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+              0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+              -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+              .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+              -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09
+              2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82
+              2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01
+              2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          View on GitHub
+        </a>
+        <p class="repo-note">Clone the repo and run <code>pip install -r requirements.txt</code>, then execute the notebooks in order from top to bottom.</p>
       </div>
     </div>
 
