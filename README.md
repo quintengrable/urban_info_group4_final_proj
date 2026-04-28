@@ -11,6 +11,8 @@ https://511.org/open-data/token
 
 This project did not automate the retrieval of the OSM Extracts for the Bay Area. Sign up for your own API key and get your extract here: https://app.interline.io/osm_extracts/interactive_view
 
+Both the OSM file and the GTFS files are necessary to create the transport network when working with R5Py. Routing calculations cannot be performed without obtaining this data first.
+
 # Project Structure
 * `/data`: Contains raw and processed data files necessary for the analysis
 * `/notebooks`: 
