@@ -1,6 +1,16 @@
 # urban_info_group4_final_proj
 Final project repository for Group 4 for Urban Informatics and Visualization
 
+# Data
+Please note that our project has several files larger than the 50 MB limit to upload to GitHub. Monica has directed us to make a note of that here and to include those large files in our final submission ZIP folder. 
+
+When retrieving ACS data, an API key is necessary, available here: https://api.census.gov/data/key_signup.html
+
+This project did not automate the retrieval of the MTC GTFS files. Sign up for you own API key and get your GTFS files here:
+https://511.org/open-data/token
+
+This project did not automate the retrieval of the OSM Extracts for the Bay Area. Sign up for your own API key and get your extract here: https://app.interline.io/osm_extracts/interactive_view
+
 # Project Structure
 * `/data`: Contains raw and processed data files necessary for the analysis
 * `/notebooks`: 
