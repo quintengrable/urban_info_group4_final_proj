@@ -12,3 +12,5 @@ shapely
 osmnx
 seaborn
 pyarrow
+r5py
+networkx
