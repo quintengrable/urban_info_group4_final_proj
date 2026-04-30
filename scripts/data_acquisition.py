@@ -1,9 +1,16 @@
 #installing & importing
 # !pip install -r requirements.txt
+#%%
 import pandas as pd
 import geopandas as gpd
 from census import Census
+import sys
+import os
+from pathlib import Path
+import pygris        # package designed to simplify accessing and loading US Census Bureau data
+from pygris.data import get_lodes
 
+#%%
 #### GETTING AND CLEANING ACS DATA
 
 #set up API key. This is our API key, update with your own before running
@@ -58,7 +65,11 @@ departure_times_raw = pd.DataFrame(
     ))
 
 #Save the raw data
-departure_times_raw.to_csv("data/raw/acs5_2023_Bay_Area_departure_times_raw.csv",index=False)
+
+parent_path = Path(__file__).parent.parent / "data/raw"
+filename = "acs5_2023_Bay_Area_departure_times_raw.csv"
+file_path = parent_path / filename
+departure_times_raw.to_csv(file_path,index=False)
 
 #Starting to clean the ACS data
 #load data with renamed columns
@@ -78,34 +89,29 @@ departure_times_cleaned["GEOID"] = departure_times_cleaned["GEO_ID"].str[-11:]
 departure_times_cleaned.drop("GEO_ID", axis = 1, inplace = True)
 
 #Now to save the cleaned ACS data
-departure_times_cleaned.to_csv("data/processed/acs5_2023_Bay_Area_departure_times_cleaned.csv",index=False)
-
-import sys
-import os
-from pathlib import Path
-
 parent_path = Path(__file__).parent.parent / "data/processed"
 filename = "acs5_2023_Bay_Area_departure_times_cleaned.csv"
 file_path = parent_path / filename
+departure_times_cleaned.to_csv(file_path,index=False)
+
+
 departure_times_cleaned = pd.read_csv(file_path)
 
-
 #### GETTING & CLEANING LODES8 DATA
-
-import pygris        # package designed to simplify accessing and loading US Census Bureau data
-from pygris.data import get_lodes
 
 lodes8_2023_od = get_lodes(state = "CA", year = 2023, lodes_type = "od") # create dataframe by pulling CA 2023 OD LODES data
 
 # save LODES raw data as a parquet file:
 # variable containing path string and name
-lodes8_2023_od_table_path = "data/lodes8_2023_od_table_raw.parquet"
+parent_path = Path(__file__).parent.parent / "data" / "raw"
+filename = "lodes8_2023_od_table_raw.parquet"
+lodes8_2023_od_table_path = parent_path / filename
 # saving LODES raw data
 lodes8_2023_od.to_parquet(lodes8_2023_od_table_path)
 
 # load in raw data from saved parquet file
-lodes8_2023_od = pd.read_parquet("data/lodes8_2023_od_table_raw.parquet")
-
+#lodes8_2023_od = pd.read_parquet("data/lodes8_2023_od_table_raw.parquet")
+#%%
 parent_path = Path(__file__).parent.parent / "data/raw"
 filename = "lodes8_2023_od_table_raw.parquet"
 file_path = parent_path / filename
@@ -160,6 +166,7 @@ bay_area_lodes["within_tract"] = bay_area_lodes["work_tract"] == bay_area_lodes[
 #group and sum
 tract_pop["within_tract"] = bay_area_lodes.groupby('work_tract')['within_tract'].sum()
 
+#%%
 #### MTC EPC DATA
 
 parent_path = Path(__file__).parent.parent / "data/raw"
@@ -206,5 +213,9 @@ county_codes = ['001', '013', '041', '055', '075', '081', '085', '095', '097']
 bay_counties = california[california["COUNTYFP"].isin(county_codes)]
 
 #saving the reprojected & cleaned bay counties to a parquet file
-bay_counties.to_parquet("data/bay_counties.parquet")
-bay_counties.to_parquet("data/processed/bay_counties_cleaned.parquet")
+
+parent_path = Path(__file__).parent.parent / "data/processed"
+filename = "bay_counties_cleaned.parquet"
+file_path = parent_path / filename
+bay_counties.to_parquet(file_path)
+# %%
