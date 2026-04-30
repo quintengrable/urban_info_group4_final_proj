@@ -16,6 +16,10 @@ This project did not automate the retrieval of the OSM Extracts for the Bay Area
 
 Both the OSM file and the GTFS files are necessary to create the transport network when working with R5Py. Routing calculations cannot be performed without obtaining this data first.
 
+Also necessary for R5Py is a Java Development Environment. For more details read this page: https://r5py.readthedocs.io/stable/user-guide/installation/installation.html
+
+It is not recommended to run R5Py with less than 4GB of RAM, and 8GB+ is preferred.
+
 # Project Structure
 * `/data`: Contains raw and processed data files necessary for the analysis
 * `/notebooks`: 
