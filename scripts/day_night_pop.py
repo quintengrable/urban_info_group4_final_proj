@@ -1,3 +1,4 @@
+#%%
 #### IMPORTS
 import pandas as pd
 import geopandas as gpd
@@ -5,7 +6,7 @@ import sys
 import os
 from pathlib import Path
 import matplotlib.pyplot as plt
-
+#%%
 #### LOADING FILES
 
 #loading in the acs data
@@ -62,8 +63,11 @@ bay_counties["epc_2050"] = bay_counties["epc_2050"].notna()
 #rename to make it clear it's a bool
 bay_counties = bay_counties.rename(columns={"epc_2050": "is_epc_2050"})
 
+#%%
 #saving the merged gdf, called bay_tracts_with_epcs.parquet
-bay_counties.to_parquet("data/processed/bay_tracts_with_epcs.parquet")
+base_path = Path(__file__).parent.parent
+file_path = base_path / "data" / "processed" / "bay_tracts_with_epcs.parquet"
+bay_counties.to_parquet(file_path)
 
 #merge on GEOID and work_tract columns, for daytime populations.
 bay_counties = pd.merge(
@@ -134,8 +138,11 @@ commuter_pct_map.save(map_output_path)
 bay_counties_plot = bay_counties.drop(columns = ["STATEFP", "COUNTYFP", "TRACTCE", "NAME", "NAMELSAD", "MTFCC", 'ALAND', 'AWATER'])
 bay_counties_plot["daytime_pop"] = bay_counties_plot["resident_pop"] + bay_counties_plot["work_pop"] - bay_counties_plot["within_tract"]
 
+#%%
 #saving the final gdf as a parquet
-bay_counties_plot.to_parquet("data/processed/day_night_pop_change.parquet")
+base_path = Path(__file__).parent.parent
+file_path = base_path / "data/processed" / "day_night_pop_change.parquet"
+bay_counties_plot.to_parquet(file_path)
 
 #creating daytime map!
 custom_bins = [3000, 6000, 9000, 12000, 15000, 20000, 25000, 30000, 40000, 50000]
@@ -226,7 +233,10 @@ ax.set(xlabel="Net change in daily population", ylabel="Tract Count",
        title="Net Daily Population Change Distribution for All Tracts");
 # semicolon mutes text outputs
 
-plt.savefig("visualizations/netpopchange_alltracts.png", dpi=300, bbox_inches="tight")
+#%%
+base_path = Path(__file__).parent.parent
+file_path = base_path / "visualizations" / "netpopchange_alltracts.png"
+plt.savefig(file_path, dpi=300, bbox_inches="tight")
 
 # VERSION 2: edited bounds to zoom in on main hump
 ax = sns.histplot(bay_counties_plot,
@@ -242,7 +252,9 @@ ax.set(xlabel="Net change in daily population", ylabel="Tract Count",
 ax.set_xlim(-5000, 10000);
 # setting manual x axis limits to not see outliers and get better idea of actual distribution shape
 
-plt.savefig("visualizations/netpopchange_alltracts_cropped.png", dpi=300, bbox_inches="tight")
+base_path = Path(__file__).parent.parent
+file_path = base_path / "visualizations" / "netpopchange_alltracts_cropped.png"
+plt.savefig(file_path, dpi=300, bbox_inches="tight")
 
 #VERSION 3: plot another that is specifically EPC tracts
 
@@ -258,8 +270,9 @@ ax.set(xlabel="Net change in daily population", ylabel="Tract Count",
 # semicolon mutes text outputs
 
 # setting manual x axis limits to not see outliers and get better idea of actual distribution shape
-
-plt.savefig("visualizations/netpopchange_EPCtracts.png", dpi=300, bbox_inches="tight")
+base_path = Path(__file__).parent.parent
+file_path = base_path / "visualizations" / "netpopchange_EPCtracts.png"
+plt.savefig(file_path, dpi=300, bbox_inches="tight")
 
 # VERSION 4: plot another that is specifically EPC tracts
 
@@ -277,7 +290,9 @@ ax.set(xlabel="Net change in daily population", ylabel="Tract Count",
 ax.set_xlim(-5000, 10000);
 # setting manual x axis limits to not see outliers and get better idea of actual distribution shape
 
-plt.savefig("visualizations/netpopchange_EPCtracts_cropped.png", dpi=300, bbox_inches="tight")
+base_path = Path(__file__).parent.parent
+file_path = base_path / "visualizations" / "netpopchange_EPCtracts_cropped.png"
+plt.savefig(file_path, dpi=300, bbox_inches="tight")
 
 #VERSION 5: plot zoomed in versions together
 
@@ -303,8 +318,9 @@ plt.ylabel("Tract Count")
 plt.title("Net Daily Population Change Distribution: All tracts vs. EPCs")
 plt.legend() # This adds the labels to the corner
 
-plt.savefig("visualizations/netpopchange_overlaid.png", dpi=300, bbox_inches="tight")
-
+base_path = Path(__file__).parent.parent
+file_path = base_path / "visualizations" / "netpopchange_overlaid.png"
+plt.savefig(file_path, dpi=300, bbox_inches="tight")
 
 # VERSION 6: plot zoomed in versions together
 
@@ -332,4 +348,8 @@ plt.ylabel("Tract Count")
 plt.title("Net Daily Population Change Distribution: All tracts vs. EPCs")
 plt.legend() # This adds the labels to the corner
 
-plt.savefig("visualizations/netpopchange_overlaid_logscale.png", dpi=300, bbox_inches="tight")
+
+base_path = Path(__file__).parent.parent
+file_path = base_path / "visualizations" / "netpopchange_overlaid_logscale.png"
+plt.savefig(file_path, dpi=300, bbox_inches="tight")
+# %%

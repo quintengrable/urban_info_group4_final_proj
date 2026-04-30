@@ -94,9 +94,12 @@ filename = "acs5_2023_Bay_Area_departure_times_cleaned.csv"
 file_path = parent_path / filename
 departure_times_cleaned.to_csv(file_path,index=False)
 
-
+#%%
+parent_path = Path(__file__).parent.parent / "data/processed"
+filename = "acs5_2023_Bay_Area_departure_times_cleaned.csv"
+file_path = parent_path / filename
 departure_times_cleaned = pd.read_csv(file_path)
-
+#%%
 #### GETTING & CLEANING LODES8 DATA
 
 lodes8_2023_od = get_lodes(state = "CA", year = 2023, lodes_type = "od") # create dataframe by pulling CA 2023 OD LODES data
@@ -165,6 +168,13 @@ tract_pop["home_pop"] = bay_area_lodes.groupby("home_tract")["S000"].sum()
 bay_area_lodes["within_tract"] = bay_area_lodes["work_tract"] == bay_area_lodes["home_tract"]
 #group and sum
 tract_pop["within_tract"] = bay_area_lodes.groupby('work_tract')['within_tract'].sum()
+
+#%%
+#save data
+parent_path = Path(__file__).parent.parent / "data/processed"
+filename = "tract_pop.parquet"
+tract_pop_path = parent_path / filename
+tract_pop.to_parquet(tract_pop_path)
 
 #%%
 #### MTC EPC DATA
