@@ -84,9 +84,9 @@ import sys
 import os
 from pathlib import Path
 
-parent_path = Path.cwd().parent / "data/processed"
+parent_path = Path(__file__).parent.parent / "data/processed"
 filename = "acs5_2023_Bay_Area_departure_times_cleaned.csv"
-file_path = os.path.join(parent_path, filename)
+file_path = parent_path / filename
 departure_times_cleaned = pd.read_csv(file_path)
 
 
@@ -106,9 +106,9 @@ lodes8_2023_od.to_parquet(lodes8_2023_od_table_path)
 # load in raw data from saved parquet file
 lodes8_2023_od = pd.read_parquet("data/lodes8_2023_od_table_raw.parquet")
 
-parent_path = Path.cwd().parent / "data/raw"
+parent_path = Path(__file__).parent.parent / "data/raw"
 filename = "lodes8_2023_od_table_raw.parquet"
-file_path = os.path.join(parent_path, filename)
+file_path = parent_path / filename
 lodes8_2023_od = pd.read_parquet(file_path)
 
 #Cleaning the LODES8 data
@@ -141,10 +141,9 @@ bay_area_lodes['work_tract'] = bay_area_lodes['w_geocode'].str[:11]
 bay_area_lodes['home_tract'] = bay_area_lodes['h_geocode'].str[:11]
 
 #Processing LODES data for plots 
-
-parent_path = Path.cwd().parent / "data/processed"
+parent_path = Path(__file__).parent.parent / "data/processed"
 filename = "bay_area_lodes_od_table.parquet"
-file_path = os.path.join(parent_path, filename)
+file_path = parent_path / filename
 bay_area_lodes = pd.read_parquet(file_path)
 
 #Determine if home and work tracts are the same
@@ -163,9 +162,9 @@ tract_pop["within_tract"] = bay_area_lodes.groupby('work_tract')['within_tract']
 
 #### MTC EPC DATA
 
-parent_path = Path.cwd().parent / "data/raw"
+parent_path = Path(__file__).parent.parent / "data/raw"
 filename = "EPC_2020_acs2018.geojson"
-file_path = os.path.join(parent_path, filename)
+file_path = parent_path / filename
 epc = gpd.read_file(file_path)
 
 #drop unnecessary columns
@@ -184,9 +183,9 @@ epc.rename(columns = {'tot_pop_po': 'total_pop_income', 'tot_hh': 'total_househo
 
 #read California census tracts
 #data from: https://www.census.gov/cgi-bin/geo/shapefiles/index.php, year 2022
-parent_path = Path.cwd().parent / "data/raw"
+parent_path = Path(__file__).parent.parent / "data/raw"
 filename = "tl_2022_06_tract/tl_2022_06_tract.shp"
-file_path = os.path.join(parent_path, filename)
+file_path = parent_path / filename
 california = gpd.read_file(file_path)
 
 #change the crs
