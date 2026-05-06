@@ -347,21 +347,34 @@ m.save(map_output_path)
 # %%
 ###########################################################################
 # plot EPCs and neighbors together
-m = avg_neighbor_tt.explore(
-    column="travel_time", 
-    cmap="Oranges",
-    tiles="CartoDB positron",
-    tooltip=["travel_time", "GEOID_neighbor", "total_pop"],
-    name="Neighbor Tracts", # layer label
-)
-
 m = avg_epc_tt.explore(
     column="travel_time", 
     cmap="Greens",
     tooltip=["travel_time", "GEOID", "total_pop"],
-    m=m,                    
     name="EPC Tracts",      # layer label
+    tiles="CartoDB positron",
+    style_kwds={
+        "color": "white",
+        "weight": 1,
+        "opacity": 1
+    }
 )
+
+m = avg_neighbor_tt.explore(
+    column="travel_time", 
+    cmap="Greens",
+    tiles="CartoDB positron",
+    tooltip=["travel_time", "GEOID_neighbor", "total_pop"],
+    name="Neighbor Tracts", # layer label
+    m=m,                    
+    style_kwds={
+        "color": "black",
+        "weight": 1,
+        "opacity": 1
+    }
+)
+
+
 
 # toggle layers
 folium.LayerControl().add_to(m)

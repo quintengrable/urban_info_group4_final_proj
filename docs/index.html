@@ -561,9 +561,11 @@
   <header class="hero">
     <div class="hero-inner">
       <p class="hero-kicker">CYPLAN 255 · Urban Informatics & Visualization · Spring 2026</p>
-      <h1>Research question!</h1>
+      <h1>How does Bay Area average daily commuting mobility vary between EPCs and non-EPCs, using daytime population data from 2023?</h1>
       <p class="hero-sub">
-        Research sub questions! Research sub questions! Research sub questions! Research sub questions! 
+        <li>How does the net change in daytime commuters in EPCs compare to non-EPC tracts?</li>
+        <li>How does the percentage of commuters in EPCs compare to surrounding census tracts?</li>
+        <li>Does the average resident in an EPC travel further distances and for longer periods of time to work than the average resident of the surrounding census tracts and neighbourhoods?</li>
       </p>
     </div>
   </header>
@@ -579,9 +581,9 @@
     <!-- 00 DATA & METHODS -->
     <section class="section fade-in" id="methods">
       <p class="section-number">00 — Data & Methods</p>
-      <h2>How we built this</h2>
+      <h2>How we built our project</h2>
       <p class="intro-text">
-        Every analytical choice shapes what the data can and cannot tell us. Here is what we used, why we used it, and where it falls short.
+        Here is an overview of what we used, why we used it, and where it falls short.
       </p>
 
       <div class="methods-grid">
@@ -589,7 +591,7 @@
         <div class="method-block">
           <div class="method-icon">⬡</div>
           <h3>Spatial unit</h3>
-          <p>We aggregated all data to the <strong>census tract</strong> level. (Why census tract rather than block group or ZIP — e.g. outcome variable only available at this resolution, small cell count instability at finer scale, etc.)</p>
+          <p>We aggregated all data to the <strong>census tract</strong> level. The LODES8 data was available at a block level, but the ACS data used for population was available only at the tract level, so this was necessary to do (verify!).</p>
           <div class="method-caveat">
             <span class="caveat-label">MAUP note</span>
             Results could differ at a coarser or finer scale. A pattern visible at the tract level may weaken or reverse at the block group level. (Reflect here on direction of likely change.)
@@ -599,10 +601,10 @@
         <div class="method-block">
           <div class="method-icon">⇄</div>
           <h3>Origin-destination data</h3>
-          <p><strong>LODES8</strong> — (Which year. What it captures: workplace-residential pairs for covered workers. What it doesn't: self-employed, remote workers, federal employees, informal work.)</p>
+          <p><strong>LODES8</strong> — 2023 LODES data was used, to harmonize with the ACS 2023 5-year estimates, the most recent data currently available. LODES data captures workplace-residential pairs for covered workers, but misses jobs like self-employed, remote workers, and informal work.</p>
           <div class="method-caveat">
             <span class="caveat-label">Coverage note</span>
-            (Note on which workers are systematically undercounted and whether that is likely to bias EPC vs non-EPC comparisons.)
+            As informal workers are not counted in LODES data, EPC tracts which may have more of these informal jobs have the potential to be misrepresented by the data available. This could bias EPC vs non-EPC comparisons.
           </div>
         </div>
 
@@ -631,6 +633,11 @@
       <details class="methods-detail">
         <summary>Data cleaning & missing values</summary>
         <div class="methods-detail-inner">
+          <p>
+            For the LODES8 California 2023 OD dataset, there weren't many issues with the data. The dataset was checked for duplicates, but none were found. 
+            The GEOID columns were cast as strings so that no issues would come up. The column naming convention was already very readable, so nothing was done to change that. 
+            A column was created that took the full GEOID and sliced it to include only the state and county parts. This was then used to filter for the 9 Bay Area counties as defined earlier in this report. 
+            Another column was created that took the full GEOID and sliced it to include the state, county, and tract. This was done to help with filtering in future functions. The data was then saved to a parquet file.</p>
           <p>(How many tract-level rows in the raw LODES file. How many dropped or excluded and why — e.g. tracts with zero workers, water-only tracts, tracts outside the nine-county Bay Area.)</p>
           <p>(Which dark data type applies to the missing observations — e.g. are tracts with missing ACS commute data missing at random, or systematically in lower-population tracts? State the type and explain your reasoning.)</p>
           <p>(What you did with missing values: dropped / imputed / flagged. Why that choice was most defensible given the dark data type identified.)</p>
@@ -644,9 +651,10 @@
     <!-- 01 SETTING THE SCENE: DAYTIME POPULATION -->
     <section class="section fade-in" id="scene">
       <p class="section-number">01 — Setting the scene: Daytime Population</p>
-      <h2>The distribution of people in the Bay Area looks very different during the day than it does at night</h2>
+      <h2>The daytime population distribution of the Bay Area looks very different than where people rest their heads at night</h2>
       <p class="intro-text">
-        Where people live and where they work are two very different maps. Residential population, the geography we're most used to, tells us where people are in the evenings. However, during working hours a very different spatial pattern emerges.
+        When a huge transportation network allows for wide difference in where people live and work, the maps for daytime and nighttime population can look very different. 
+        Residential population, the geography we're most used to, tells us where people are in the evenings. During working hours, a very different spatial pattern emerges.
       </p>
       <p class="body-text">
         Using LODES8 origin-destination employment data, we mapped where the Bay Area's workers are located at night (their home census tracts) and where they are during the day (their workplace census tracts). The contrast reveals the scale of the region's daily spatial reorganization. 
@@ -656,16 +664,16 @@
       <div class="two-up">
         <div class="fig">
           <iframe src="page_assets/nighttime_pop.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
-          <p class="fig-caption">Figure 1. Residential distribution of Bay Area commuters by census tract. LODES8.</p>
+          <p class="fig-caption">Figure 1. Residential distribution of Bay Area commuters by census tract. EPC tracts outlined. LODES8.</p>
         </div>
         <div class="fig">
           <iframe src="page_assets/daytime_pop.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
-          <p class="fig-caption">Figure 2. Workplace distribution of Bay Area commuters by census tract. LODES8.</p>
+          <p class="fig-caption">Figure 2. Workplace distribution of Bay Area commuters by census tract. EPC tracts outlined. LODES8.</p>
         </div>
       </div>
 
       <div class="bridge">
-        <p>The difference between these maps is clear, but the real story is found in the direction and distance of the commute flows, and in who is making them.</p>
+        <p>The difference between these maps is clear, but the real story is found in the direction and distance of the commute flows, and in who is making them. (not sure if this is necessary)</p>
       </div>
     </section>
 
@@ -697,7 +705,7 @@
 
       <div class="fig">
           <iframe src="page_assets/net_worker_change.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
-        <p class="fig-caption">Figure 3. Net change in worker population (night to day) by census tract. LODES8.</p>
+        <p class="fig-caption">Figure 3. Net change in worker population (night to day) by census tract. EPC tracts outlined. LODES8.</p>
       </div>
 
       <div class="fig">
@@ -744,7 +752,7 @@
         </div>
 
         <p class="body-text">
-          Comparing the net change distribution for EPC tracts against all Bay Area tracts shows that there is no strong observable difference between the distribution for EPCs and non-EPCs across the Bay Area as a whole. The peak of both distribututions falls between in the negative region, showing that across the board, tracts most commonly experience a loss of workers during the day. The difference between EPCs and the wider Bay Area becomes apparent when looking at the positive tails - EPCs include far fewer employment hotspots than the wider Bay Area, if any.
+          Comparing the net change distribution for EPC tracts against all Bay Area tracts shows that the distribution for EPCs and non-EPCs across the Bay Area have generally the same trend. The peak of both distribututions falls between in the negative region, showing that across the board, tracts most commonly experience a loss of workers during the day. The difference between EPCs and the wider Bay Area becomes apparent when looking at the positive tails - EPCs include far fewer employment hotspots than the wider Bay Area, if any.
         </p>
 
         <div class="bridge">
@@ -786,31 +794,37 @@
       </div>
       <div class="fig">
           <iframe src="page_assets/avg_epc_neigh_tt_map.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
-        <p class="fig-caption">Figure 7. Average travel time to work for EPC tracts and their neighbors.</p>
+        <p class="fig-caption">Figure 7. Average travel time to work for EPC tracts and their neighbors. EPC tracts in green.</p>
       </div>
       <div class="fig">
            <img src="page_assets/county_avg_tt.png" alt="Description of map" style="width:100%; border-radius:8px;">
         <p class="fig-caption">Figure 8. Average travel time to work for EPC tracts and their neighbors, for each county in the Bay Area</p>
       </div>
+<p class="body-text">
+        From Figure 8 above, the average travel time for EPCs and neighbors of EPCs is quite similar in the more urban counties,
+        and in the counties with a less dense population, it can be seen that the tracts neighboring EPCs actually have worse travel times.
+        This is likely due to the fact that EPCs tend to be located in the urban centers, where transit is usually stronger, compared to the more
+        rural counties like Sonoma and Marin.
+      </p>
       <div class="two-up">
         <div class="fig">
           <div class="fig-placeholder">
             <strong>Car commute times for EPC residents</strong>
             <code>→ chart goes here</code>
           </div>
-          <p class="fig-caption">Figure 7. Car travel time distribution for EPC residents. (Or would we want something other than a distribution?)</p>
+          <p class="fig-caption">Figure 9. Car travel time distribution for EPC residents. (Or would we want something other than a distribution?)</p>
         </div>
         <div class="fig">
           <div class="fig-placeholder">
             <strong>Transit commute times for EPC residents</strong>
             <code>→ chart goes here</code>
           </div>
-          <p class="fig-caption">Figure 8. Transit travel time distribution for EPC residents. (Or would we want something other than a distribution?)</p>
+          <p class="fig-caption">Figure 10. Transit travel time distribution for EPC residents. (Or would we want something other than a distribution?)</p>
         </div>
       </div>
 
       <div class="bridge">
-        <p>Although absolute car and transit travel times can give us some insights, the <em>gap</em> between the transit and car commute lengths reveals how well the transit network serves it's most disadvantaged residents.</p>
+        <p>While commute travel times allow direct comparisons between different tracts, the <em>gap</em> between the transit and car commute lengths within the same tract reveals how well (or poorly) the transit network serves it's most disadvantaged residents.</p>
       </div>
     </section>
 
@@ -818,11 +832,18 @@
       <div class="caveat-row">
         <div class="caveat-col">
           <span class="caveat-label">What this doesn't tell us</span>
-          <p>(Caveat specific to this section's finding — e.g. net worker change reflects covered LODES workers only; self-employed and remote workers are excluded, which may disproportionately affect certain tract types.)</p>
+          <p>The transit travel times in this section were calculated using the centroids of each tract. This is obviously
+            not accurate to reality, but there were no more granular geographic locations provided in the LODES data and simulating 
+            a variety of origins and destinations within each tract would have been too computationally demanding for the hardware
+            the team had available. Tracts are drawn to capture roughly the same amount of population in each, which means using the centroid
+            in the denser, urban tracts (which are smaller) is a better estimate than the larger, more rural tracts on the edges of the Bay Area.
+          </p>
         </div>
         <div class="caveat-col">
           <span class="caveat-label">Follow-up question</span>
-          <p>(One question this result raises but the analysis doesn't answer — e.g. Has the spatial mismatch between EPC residents and job centres grown or shrunk since 2019?)</p>
+          <p>While EPCs have decent access to transit in the urban areas, are their job choices limited by the amount of time it takes
+            to arrive anywhere using transit?
+          </p>
         </div>
       </div>
     </div>
@@ -932,7 +953,7 @@
           </svg>
           View on GitHub
         </a>
-        <p class="repo-note">Clone the repo and run <code>pip install -r requirements.txt</code>, then execute the notebooks in order from top to bottom.</p>
+        <p class="repo-note">Clone the repo and run <code>pip install -r requirements.txt</code>, then execute the notebooks in the order provided in the <code>readme.txt</code></p>
       </div>
     </div>
 
