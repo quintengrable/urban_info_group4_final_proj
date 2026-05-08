@@ -348,6 +348,8 @@ m.save(map_output_path)
 ###########################################################################
 # plot EPCs and neighbors together
 m = avg_epc_tt.explore(
+    location=[37.6, -122.2],    #Wylie added in to set the initial map view
+    zoom_start=9,   #Wylie added in to set the initial map view
     column="travel_time", 
     cmap="Greens",
     tooltip=["travel_time", "GEOID", "total_pop"],
@@ -361,6 +363,8 @@ m = avg_epc_tt.explore(
 )
 
 m = avg_neighbor_tt.explore(
+    location=[37.6, -122.2],    #Wylie added in to set the initial map view
+    zoom_start=9,   #Wylie added in to set the initial map view
     column="travel_time", 
     cmap="Greens",
     tiles="CartoDB positron",
@@ -383,6 +387,10 @@ m
 
 # save map
 map_output_path = base_path / "visualizations" / "avg_epc_neigh_tt_map.html"
+m.save(map_output_path)
+
+#Wylie added in to also save map to docs\page_assets 
+map_output_path = base_path / "docs" / "page_assets" / "avg_epc_neigh_tt_map.html"
 m.save(map_output_path)
 # %%
 #################################################################

@@ -88,6 +88,8 @@ def plt_gdf_cmap_outlinegeos(
     """
     # Base colormap of net change
     m = gdf.explore(
+        location=[37.6, -122.2],
+        zoom_start=9, 
         column=cmap_col,
         scheme="UserDefined",
         classification_kwds={"bins": cmap_scale_bins},
@@ -123,8 +125,5 @@ def plt_gdf_cmap_outlinegeos(
         tooltip=False,
         name=outline_name
     )
-
-    #Layer control to toggle EPC on/off
-    folium.LayerControl().add_to(m)
 
     return m

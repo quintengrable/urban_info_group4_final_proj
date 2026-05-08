@@ -658,16 +658,16 @@
       </p>
       <p class="body-text">
         Using LODES8 origin-destination employment data, we mapped where the Bay Area's workers are located at night (their home census tracts) and where they are during the day (their workplace census tracts). The contrast reveals the scale of the region's daily spatial reorganization. 
-        <em>Note the scale difference between the maps!</em>
+        <em>Note the colorbar scale difference between the maps!</em>
       </p>
 
       <div class="two-up">
         <div class="fig">
-          <iframe id="map-left" src="page_assets/nighttime_pop.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
+          <iframe id="map-left" src="page_assets/nighttime_pop.html" style="width:100%; height:550px; border:none; border-radius:8px;"></iframe>          
           <p class="fig-caption">Figure 1. Residential distribution of Bay Area commuters by census tract. EPC tracts outlined. LODES8.</p>
         </div>
         <div class="fig">
-          <iframe id="map-right" src="page_assets/daytime_pop.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
+          <iframe id="map-right" src="page_assets/daytime_pop.html" style="width:100%; height:550px; border:none; border-radius:8px;"></iframe>          
           <p class="fig-caption">Figure 2. Workplace distribution of Bay Area commuters by census tract. EPC tracts outlined. LODES8.</p>
         </div>
       </div>
@@ -754,7 +754,7 @@
       </p>
 
       <div class="fig">
-          <iframe src="page_assets/net_worker_change.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
+          <iframe id = "net-change" src="page_assets/net_worker_change.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
         <p class="fig-caption">Figure 3. Net change in worker population (night to day) by census tract. EPC tracts outlined. LODES8.</p>
       </div>
 
@@ -843,12 +843,12 @@
         <p class="fig-caption">Figure 6. Commute destinations for workers residing in EPC tracts. SOURCE SOURCE SOURCE.</p>
       </div>
       <div class="fig">
-          <iframe src="page_assets/avg_epc_neigh_tt_map.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
-        <p class="fig-caption">Figure 7. Average travel time to work for EPC tracts and their neighbors. EPC tracts in green.</p>
+          <iframe id ="transit" src="page_assets/avg_epc_neigh_tt_map.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
+        <p class="fig-caption">Figure 7. Average travel time to work via transit for EPC tracts and their neighbors. EPC tracts in green.</p>
       </div>
       <div class="fig">
            <img src="page_assets/county_avg_tt.png" alt="Description of map" style="width:100%; border-radius:8px;">
-        <p class="fig-caption">Figure 8. Average travel time to work for EPC tracts and their neighbors, for each county in the Bay Area</p>
+        <p class="fig-caption">Figure 8. Average travel time to work via private vehiclefor EPC tracts and their neighbors, for each county in the Bay Area</p>
       </div>
 <p class="body-text">
         From Figure 8 above, the average travel time for EPCs and neighbors of EPCs is quite similar in the more urban counties,
@@ -1021,5 +1021,41 @@
     document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
   </script>
 
+  <script>
+    const obs = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+  </script>
+
+  <script>
+    function injectLegendStyle(iframeId) {
+      const iframe = document.getElementById(iframeId);
+      iframe.addEventListener('load', () => {
+        const style = iframe.contentDocument.createElement('style');
+        style.textContent = `
+          .legend.leaflet-control {
+            max-width: 80% !important;
+            box-sizing: border-box !important;
+          }
+          .legend svg {
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+          }
+          .legend svg text {
+            font-size: 10px !important;
+          }
+        `;
+        iframe.contentDocument.head.appendChild(style);
+      });
+    }
+
+    injectLegendStyle('map-left');
+    injectLegendStyle('map-right');
+    injectLegendStyle('map-net-change');
+    injectLegendStyle('map-transit');
+  </script>
 </body>
 </html>

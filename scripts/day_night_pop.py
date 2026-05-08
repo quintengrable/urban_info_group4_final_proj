@@ -96,6 +96,7 @@ bay_counties = pd.merge(
 #rename columns and add total daytime population
 bay_counties = bay_counties.rename(columns = {"total_commuters": "resident_pop"})
 
+#%%
 #### PLOTTING PERCENTAGE OF POPULATION WHO ARE COMMUTERS
 
 #making a list of the columns we don't need
@@ -132,18 +133,18 @@ base_path = Path(__file__).parent.parent
 map_output_path = base_path / "visualizations" / "pct_commuter_pop.html"
 commuter_pct_map.save(map_output_path)
 
+#%%
 #### PLOTTING DAYTIME & NIGHTIME COMMUTER POPULATIONS
 
 #drop the unnecessary columns, create column of daytime population
 bay_counties_plot = bay_counties.drop(columns = ["STATEFP", "COUNTYFP", "TRACTCE", "NAME", "NAMELSAD", "MTFCC", 'ALAND', 'AWATER'])
 bay_counties_plot["daytime_pop"] = bay_counties_plot["resident_pop"] + bay_counties_plot["work_pop"] - bay_counties_plot["within_tract"]
 
-#%%
 #saving the final gdf as a parquet
 base_path = Path(__file__).parent.parent
 file_path = base_path / "data/processed" / "day_night_pop_change.parquet"
 bay_counties_plot.to_parquet(file_path)
-
+ #%% 
 #creating daytime map!
 custom_bins = [3000, 6000, 9000, 12000, 15000, 20000, 25000, 30000, 40000, 50000]
 
@@ -167,8 +168,15 @@ base_path = Path(__file__).parent.parent
 map_output_path = base_path / "visualizations" / "daytime_pop.html"
 daytime_map.save(map_output_path)
 
+#saving the map to docs/page_assets folder
+base_path = Path(__file__).parent.parent
+map_output_path = base_path / "docs" / "page_assets" / "daytime_pop.html"
+daytime_map.save(map_output_path)
+
+#%%
 #creating nighttime map!
 custom_bins = [500, 1000, 1500, 2000, 2500, 3000, 3500]
+bay_counties_plot["resident_pop"] = bay_counties_plot["resident_pop"].replace(0, float('nan'))
 
 nighttime_map = mapping_functions.plt_gdf_cmap_outlinegeos(
     gdf=bay_counties_plot,
@@ -190,6 +198,12 @@ base_path = Path(__file__).parent.parent
 map_output_path = base_path / "visualizations" / "nighttime_pop.html"
 nighttime_map.save(map_output_path)
 
+#saving the map to docs/page_assets folder
+base_path = Path(__file__).parent.parent
+map_output_path = base_path / "docs" / "page_assets" / "nighttime_pop.html"
+nighttime_map.save(map_output_path)
+
+#%%
 #### PLOTTING NET NIGHT TO DAY CHANGE IN POPULATION OF COMMUTERS
 
 #calculating the net change
@@ -218,6 +232,12 @@ base_path = Path(__file__).parent.parent
 map_output_path = base_path / "visualizations" / "net_worker_change.html"
 net_change_map.save(map_output_path)
 
+#saving the map to docs/page_assets folder
+base_path = Path(__file__).parent.parent
+map_output_path = base_path / "docs" / "page_assets" / "net_worker_change.html"
+net_change_map.save(map_output_path)
+
+#%%
 #### MAKING HISTOGRAMS TO SHOW DIFFERENCE BETWEEN EPCS & BAY AREA
 
 import seaborn as sns
@@ -233,7 +253,6 @@ ax.set(xlabel="Net change in daily population", ylabel="Tract Count",
        title="Net Daily Population Change Distribution for All Tracts");
 # semicolon mutes text outputs
 
-#%%
 base_path = Path(__file__).parent.parent
 file_path = base_path / "visualizations" / "netpopchange_alltracts.png"
 plt.savefig(file_path, dpi=300, bbox_inches="tight")
@@ -348,8 +367,13 @@ plt.ylabel("Tract Count")
 plt.title("Net Daily Population Change Distribution: All tracts vs. EPCs")
 plt.legend() # This adds the labels to the corner
 
-
+#save to visualizations folder
 base_path = Path(__file__).parent.parent
 file_path = base_path / "visualizations" / "netpopchange_overlaid_logscale.png"
+plt.savefig(file_path, dpi=300, bbox_inches="tight")
+
+#save to docs\page_assets folder
+base_path = Path(__file__).parent.parent
+file_path = base_path / "docs" / "page_assets" / "netpopchange_overlaid_logscale.png"
 plt.savefig(file_path, dpi=300, bbox_inches="tight")
 # %%
