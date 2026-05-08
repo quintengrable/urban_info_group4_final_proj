@@ -82,6 +82,15 @@ plt.savefig(
     transparent=False
 )
 
+#save to website
+web_save_path = Path(__file__).parent.parent / "docs" / "page_assets" / "day_night_county.png"
+plt.savefig(
+    web_save_path, 
+    dpi=300,              
+    bbox_inches='tight',   
+    facecolor='white',     
+    transparent=False
+)
 plt.tight_layout()
 plt.show()
 
