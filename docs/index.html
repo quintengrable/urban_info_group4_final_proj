@@ -638,9 +638,38 @@
             The GEOID columns were cast as strings so that no issues would come up. The column naming convention was already very readable, so nothing was done to change that. 
             A column was created that took the full GEOID and sliced it to include only the state and county parts. This was then used to filter for the 9 Bay Area counties as defined earlier in this report. 
             Another column was created that took the full GEOID and sliced it to include the state, county, and tract. This was done to help with filtering in future functions. The data was then saved to a parquet file.</p>
-          <p>(How many tract-level rows in the raw LODES file. How many dropped or excluded and why — e.g. tracts with zero workers, water-only tracts, tracts outside the nine-county Bay Area.)</p>
-          <p>(Which dark data type applies to the missing observations — e.g. are tracts with missing ACS commute data missing at random, or systematically in lower-population tracts? State the type and explain your reasoning.)</p>
-          <p>(What you did with missing values: dropped / imputed / flagged. Why that choice was most defensible given the dark data type identified.)</p>
+          
+          <p><b>Dark Data Type 1 - Data we know are missing</b>
+            Self-employed, remote workers, gig workers, and informal workers are missing from LODES coverage, which could result in underrepresentation in EPCs.
+            Although there is nothing we can do to mitigate this missing data, it is important to acknowledge the bias that this introduces into our visualizations.
+          </p>
+
+          <p><b>Dark Data Type 3 - Choosing just some cases</b>
+            The LODES and ACS data used in our visualizations are from the universe of workers aged 16-years and over who commute to work.
+            This fails to include anyone who doesn't work, doesn't commute to work, or is under the age of 16. 
+            This is sufficient for our analysis on commute patterns, but does not present a complete picture of EPCs and equity considerations.
+          </p>
+
+          <p><b>Dark Data Type 4 - Self-selection</b>
+            All the data that we are using are based on ACS responses, which residents are given the option of filling out or not.
+            This can result in bias as certain groups are less likely to respond to the ACS, such as minority communities and those with unsecure immigration status.
+          </p>
+
+          <p><b>Dark Data Type 7 - Changes with time</b>
+            Firstly, the MTC designation of EPCs is based on 2018-2022 ACS data, and LODES and ACS data used are from 2023. 
+            The underlying characteristics of the census tracts that made them EPCs may have changed in the interviening years.
+            Secondly, the modelled travel times for public transit commutes are based on transit schedules, which may change over time.
+          </p>
+
+          <p><b>Dark Data Type 9 - Summaries of data</b>
+            In all of our map visualizations, we are summarizing data at the census tract level.
+            By doing this, we obscure the details about individuals - in the visualizations we don't see the range and distribution of data <em>within</em> census tracts.
+            Furthermore, when we compare averages between counties, we lose information about the variability within each county.
+          </p>
+
+          <p><b>Dark Data Type 11 - Feedback and gaming</b>
+            There is a chance that, in answering the ACS, respondents may provide 'desirable' answers rather than truthful ones, leading to biased estimates.
+          </p>
         </div>
       </details>
 
@@ -709,7 +738,6 @@
           }
         }
 
-        // Listen on the PARENT window and forward to the correct partner iframe
         window.addEventListener('message', function(e) {
           if (!e.data || e.data.type !== 'mapSync' || syncing) return;
           syncing = true;
@@ -731,8 +759,14 @@
         injectSync('map-right', 'map-left');
       </script>
 
+      <p class="body-text">
+        As expected, the distribution of people is much more concentrated in the daytime map, particularly in downtown San Francisco and Santa Clara. 
+        Census tracts that contain the airports (SFO, OAK, and SJC) also show high daytime populations.
+        Looking at the outlined EPC tracts, the trend is one of distributed population during the night and low population during the day, which follows the same pattern as the Bay Area as a whole.
+      </p>
+
       <div class="bridge">
-        <p>The difference between these maps is clear, but the real story is found in the direction and distance of the commute flows, and in who is making them. (not sure if this is necessary)</p>
+        <p>The difference between these maps is clear, but the real story is found in the direction and distance of the commute flows, and in who is making them.</p>
       </div>
     </section>
 
@@ -744,7 +778,7 @@
         </div>
         <div class="caveat-col">
           <span class="caveat-label">Follow-up question</span>
-          <p>(One question this result raises but the analysis doesn't answer — e.g. Has the spatial mismatch between EPC residents and job centres grown or shrunk since 2019?)</p>
+          <p>Although EPC tracts display a similar pattern to the overall Bay Area - daytime concentration and nighttime distribution - is there a difference in the <em>strength</em> of this pattern?</p>
         </div>
       </div>
     </div>
@@ -766,6 +800,16 @@
           <iframe id = "net-change" src="page_assets/net_worker_change.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
         <p class="fig-caption">Figure 3. Net change in worker population (night to day) by census tract. EPC tracts outlined. LODES8.</p>
       </div>
+
+      <p class="body-text">
+        Figure 3 reveals the daily reconfiguration of workers throughout the Bay Area, and suggests a poly-centric nature to the spatial distrubution of employment locations.
+        Zooming in on the outlined EPC tracts, there are EPCs that both 'import' and 'export' workers, with no obvious difference between EPCs and the rest of the Bay Area in this regard.
+      </p>
+
+      <p class="body-text">
+        Although it can be insightful to observe the spatial pattern across the whole Bay Area, large differences in demographics, built form, and local governance mean that it can be less relevant to compare daytime and nightime worker populations at such a large scale.
+        To account for the highest level variation, the figure below compares daytime and nightime worker population by county. It is important to note that within all counties there is still a huge amount of variation, so this insight is still generalized.
+      </p>
 
       <div class="fig">
         <img src="page_assets/day_night_county.png" alt="Description of map" style="width:100%; border-radius:8px;">
@@ -853,11 +897,11 @@
       </div>
       <div class="fig">
           <iframe id ="transit" src="page_assets/avg_epc_neigh_tt_map.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
-        <p class="fig-caption">Figure 7. Average travel time to work via transit for EPC tracts and their neighbors. EPC tracts in green.</p>
+        <p class="fig-caption">Figure 7. Average travel time to work via public transit for EPC tracts and their neighbors. EPC tracts in green.</p>
       </div>
       <div class="fig">
            <img src="page_assets/county_avg_tt.png" alt="Description of map" style="width:100%; border-radius:8px;">
-        <p class="fig-caption">Figure 8. Average travel time to work via private vehiclefor EPC tracts and their neighbors, for each county in the Bay Area</p>
+        <p class="fig-caption">Figure 8. Average travel time to work via public transit for EPC tracts and their neighbors, for each county in the Bay Area</p>
       </div>
 <p class="body-text">
         From Figure 8 above, the average travel time for EPCs and neighbors of EPCs is quite similar in the more urban counties,
