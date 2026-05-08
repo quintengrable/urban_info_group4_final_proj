@@ -592,7 +592,7 @@
           <div class="method-icon">⬡</div>
           <h3>Spatial unit</h3>
           <p>We aggregated all data to the <strong>census tract</strong> level. 
-            The LODES8 data was available at a block level, but the ACS data used for population was available only at the tract level, so this was necessary to do.
+            The LODES8 data was available at a block level, but the ACS (American Community Survey) data used for population was available only at the tract level, so this was necessary to do.
             <br>The transit travel times in section 4 were calculated using the centroids of each tract.
             Since tracts are drawn to capture roughly the same number of people in each, using the centroid to calculate travel times results in a better estimate in the denser, urban tracts (which are smaller) than the more rural tracts on the edges of the Bay Area.
             </p>
@@ -600,6 +600,19 @@
             <span class="caveat-label">MAUP note</span>
             Results could differ at a coarser or finer scale. 
             A pattern visible at the tract level may weaken and be more complex at the block group level, and travel time estimate accuracy depends on the geographic size of census tracts, which aren't uniform.
+          </div>
+        </div>
+
+        <div class="method-block">
+          <div class="method-icon">◎</div>
+          <h3>Equity Priority Communities</h3>
+          <p><strong>MTC EPC shapefile</strong>, 2022. EPCs are census tracts identified by the Metropolitan Transportation Commission (MTC) as facing compounding disadvantages, based on data from the ACS (American Community Survey). 
+            To qualify, census tracts must meet the necessary criteria of containing at least 28% low-income residents, as well as meeting several of the supporting criteria, such as containing at least 70% people of color, 15% zero-vehicle households, and 14% rent-burdened households.
+            <br>For our analysis, the supporting requirement of at least 15% zero-vehicle households is important context when investigating commute accessibility by public transit, and is justification for paying particular attention to transit accessibility for residents of EPCs.
+           </p>
+          <div class="method-caveat">
+            <span class="caveat-label">Ecological fallacy note</span>
+            EPC designation is a tract-level attribute. Findings about EPC tracts do not necessarily hold for every individual within them.
           </div>
         </div>
 
@@ -620,16 +633,6 @@
           <div class="method-caveat">
             <span class="caveat-label">Limitation</span>
             ACS departure time is self-reported and aggregated, and only includes workers ages 16 and over who commute to work.
-          </div>
-        </div>
-
-        <div class="method-block">
-          <div class="method-icon">◎</div>
-          <h3>Equity Priority Communities</h3>
-          <p><strong>MTC EPC shapefile</strong>, (vintage year). EPCs are census tracts identified by MTC as facing compounding disadvantages across income, pollution burden, car ownership, and access to opportunity. We joined EPC designation to LODES tracts by GEOID.</p>
-          <div class="method-caveat">
-            <span class="caveat-label">Ecological fallacy note</span>
-            EPC designation is a tract-level attribute. Findings about EPC tracts do not necessarily hold for every individual within them.
           </div>
         </div>
 
@@ -767,7 +770,7 @@
       <p class="body-text">
         As expected, the distribution of people is much more concentrated in the daytime map, particularly in downtown San Francisco and Santa Clara. 
         Census tracts that contain the airports (SFO, OAK, and SJC) also show high daytime populations.
-        Looking at the outlined EPC tracts, the trend is one of distributed population during the night and low population during the day, which follows the same pattern as the Bay Area as a whole.
+        Looking at the outlined EPC tracts <em>(Equity Priority Communities - census tracts designated by MTC as facing compounding disadvantages including low income, high pollution burden, and limited car ownership)</em>, the trend is one of distributed population during the night and low population during the day, which follows the same pattern as the Bay Area as a whole.
       </p>
 
       <div class="bridge">
