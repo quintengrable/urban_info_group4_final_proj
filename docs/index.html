@@ -672,16 +672,16 @@
         </div>
       </div>
       
-      <! this script section is what makes the maps move together>
+      <!-- this script section is what makes the maps move together -->
       <script>
         let syncing = false;
 
         function injectSync(iframeId, partnerId) {
           const iframe = document.getElementById(iframeId);
-          
+
           function setupSync() {
             const win = iframe.contentWindow;
-            const poll = setInterval(() => {
+            const poll = setInterval(function() {
               const mapObj = Object.values(win).find(
                 function(v) { return v && v._leaflet_id && typeof v.getCenter === 'function'; }
               );
@@ -693,29 +693,39 @@
                 syncing = true;
                 const center = mapObj.getCenter();
                 const zoom = mapObj.getZoom();
-                document.getElementById(partnerId).contentWindow.postMessage(
-                  { type: 'mapSync', lat: center.lat, lng: center.lng, zoom }, '*'
+                // post to PARENT window, not the partner iframe
+                window.postMessage(
+                  { type: 'mapSync', from: iframeId, lat: center.lat, lng: center.lng, zoom }, '*'
                 );
                 syncing = false;
-              });
-
-              window.addEventListener('message', function(e) {
-                if (e.data && e.data.type === 'mapSync' && !syncing) {
-                  syncing = true;
-                  mapObj.setView([e.data.lat, e.data.lng], e.data.zoom, { animate: false });
-                  syncing = false;
-                }
               });
             }, 200);
           }
 
-          // Handle both cases: already loaded, or not yet
           if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
             setupSync();
           } else {
             iframe.addEventListener('load', setupSync);
           }
         }
+
+        // Listen on the PARENT window and forward to the correct partner iframe
+        window.addEventListener('message', function(e) {
+          if (!e.data || e.data.type !== 'mapSync' || syncing) return;
+          syncing = true;
+
+          const partnerId = e.data.from === 'map-left' ? 'map-right' : 'map-left';
+          const partnerWin = document.getElementById(partnerId).contentWindow;
+          
+          // Find the partner map object and move it
+          const mapObj = Object.values(partnerWin).find(
+            function(v) { return v && v._leaflet_id && typeof v.getCenter === 'function'; }
+          );
+          if (mapObj) {
+            mapObj.setView([e.data.lat, e.data.lng], e.data.zoom, { animate: false });
+          }
+          syncing = false;
+        });
 
         injectSync('map-left', 'map-right');
         injectSync('map-right', 'map-left');
