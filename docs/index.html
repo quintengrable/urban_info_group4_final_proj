@@ -674,51 +674,50 @@
       
       <! this script section is what makes the maps move together>
       <script>
-        // Wait for both iframes to fully load
-        const frames = ['map-left', 'map-right'];
         let syncing = false;
 
         function injectSync(iframeId, partnerId) {
           const iframe = document.getElementById(iframeId);
-          iframe.addEventListener('load', () => {
+          
+          function setupSync() {
             const win = iframe.contentWindow;
-            const doc = iframe.contentDocument;
-
-            // Poll until the Leaflet map object is available
             const poll = setInterval(() => {
-              // Folium stores the map on a variable like `map_XXXXXXXX`
               const mapObj = Object.values(win).find(
-                v => v && v._leaflet_id && typeof v.getCenter === 'function'
+                function(v) { return v && v._leaflet_id && typeof v.getCenter === 'function'; }
               );
               if (!mapObj) return;
               clearInterval(poll);
 
-              mapObj.on('moveend zoomend', () => {
+              mapObj.on('moveend zoomend', function() {
                 if (syncing) return;
                 syncing = true;
                 const center = mapObj.getCenter();
                 const zoom = mapObj.getZoom();
-                // Send to partner
                 document.getElementById(partnerId).contentWindow.postMessage(
-                  { type: 'mapSync', lat: center.lat, lng: center.lng, zoom },
-                  '*'
+                  { type: 'mapSync', lat: center.lat, lng: center.lng, zoom }, '*'
                 );
                 syncing = false;
               });
 
-              // Listen for incoming sync messages
-              window.addEventListener('message', (e) => {
-                if (e.data?.type === 'mapSync' && !syncing) {
+              window.addEventListener('message', function(e) {
+                if (e.data && e.data.type === 'mapSync' && !syncing) {
                   syncing = true;
                   mapObj.setView([e.data.lat, e.data.lng], e.data.zoom, { animate: false });
                   syncing = false;
                 }
               });
             }, 200);
-          });
+          }
+
+          // Handle both cases: already loaded, or not yet
+          if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+            setupSync();
+          } else {
+            iframe.addEventListener('load', setupSync);
+          }
         }
 
-        injectSync('map-left',  'map-right');
+        injectSync('map-left', 'map-right');
         injectSync('map-right', 'map-left');
       </script>
 
@@ -1012,14 +1011,6 @@
   <footer>
     CYPLAN 255 Urban Informatics & Visualization &nbsp;·&nbsp; UC Berkeley &nbsp;·&nbsp; Group 4 &nbsp;·&nbsp; Spring 2026
   </footer>
-
-  <script>
-    const obs = new IntersectionObserver(
-      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-      { threshold: 0.08 }
-    );
-    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
-  </script>
 
   <script>
     const obs = new IntersectionObserver(
