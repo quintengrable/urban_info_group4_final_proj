@@ -1,3 +1,5 @@
+data/raw/
+data/processed/bay_area_lodes_od_table.parquet
 data/
 
 # Ignore Python virtual environments
