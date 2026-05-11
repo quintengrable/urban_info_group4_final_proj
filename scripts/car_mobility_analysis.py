@@ -39,7 +39,6 @@ epc_car_tt.sample(10)
 
 #%% 
 #compare to transit travel times 
-
 #read in transit travel times 
 base_path = Path(__file__).parent.parent
 epc_pubtrans_tt_path = base_path / "data" / "processed" / "epc_pubtrans_tt_mapping.parquet"
@@ -91,8 +90,9 @@ map_output_path = base_path / "visualizations" / "car_avg_epc_tt_map.html"
 m.save(map_output_path)
 
 ###########################################################################
+# repeat analysis for neighbours - od pair travel times, avg travel times, plots
 #%%
-# neighbour travel times
+# get neighbour travel times for od pairs and average neighbor travel times
 base_path = Path(__file__).parent.parent
 file_path = base_path / "data" / "processed" / "neighbor_car_tt_mapping.parquet"
 neighbor_car_tt_matrix = pd.read_parquet(file_path)
@@ -101,9 +101,6 @@ base_path = Path(__file__).parent.parent
 neighbor_odpairs_path = base_path / "data" / "processed" / "neighbor_odpairs.parquet"
 neighbor_odpairs = pd.read_parquet(neighbor_odpairs_path)
 
-display(neighbor_odpairs.head())
-neighbor_car_tt_matrix.head()
-#%%
 # inner merge to filter travel time matrix to actual od pairs
 neighbor_car_tt = neighbor_odpairs.merge(
     neighbor_car_tt_matrix, 
@@ -112,13 +109,11 @@ neighbor_car_tt = neighbor_odpairs.merge(
     how='inner'
 )
 
-#%%
 #clean filtered travel time matrix 
 #neighbor_car_tt.drop(columns = ['S000', 'work_tract', 'home_tract'], inplace = True)
 neighbor_car_tt.rename(columns = {'travel_time':'car_travel_time'}, inplace = True)
 neighbor_car_tt.head(10)
 
-#%%
 neighbor_average_times = neighbor_car_tt.groupby('from_id')['car_travel_time'].mean().reset_index().round(2)
 neighbor_average_times.head()
 
@@ -143,6 +138,7 @@ avg_neighbor_tt['car_travel_time'] = avg_neighbor_tt['car_travel_time'].round(2)
 avg_neighbor_tt = avg_neighbor_tt[avg_neighbor_tt['car_travel_time'] != 0]
 
 #%%
+# plot car travel time for neighbours only
 m = avg_neighbor_tt.explore("car_travel_time", 
                        cmap="Oranges",
                        tiles="CartoDB positron",
@@ -154,7 +150,7 @@ map_output_path = base_path / "visualizations" / "car_avg_neighbor_tt_map.html"
 m.save(map_output_path)
 # %%
 ###########################################################################
-# plot EPCs and neighbors together
+# plot car travel time for EPCs and neighbors together
 m = avg_neighbor_tt.explore(
     column="car_travel_time", 
     cmap="Oranges",
@@ -181,19 +177,13 @@ map_output_path = base_path / "visualizations" / "car_avg_epc_neigh_tt_map.html"
 m.save(map_output_path)
 # %%
 #################################################################
-
+# create bar graph of travel times by car for epcs and neighbours by county
 #%%
-avg_neighbor_tt_all = avg_neighbor_tt['car_travel_time'].mean()
-avg_neighbor_tt_all = avg_neighbor_tt_all.round(2)
-avg_neighbor_tt_all
+# get average travel times 
+avg_neighbor_tt_all = avg_neighbor_tt['car_travel_time'].mean().round(2)
+avg_epc_tt_all = avg_epc_tt['car_travel_time'].mean().round(2)
 
-# %%
-avg_epc_tt_all = avg_epc_tt['car_travel_time'].mean()
-avg_epc_tt_all = avg_epc_tt_all.round(2)
-avg_epc_tt_all
-
-#%%
-# compare average mobility per county
+# group and map by county
 bay_area_geocodes = {'06001': 'Alameda',
                      '06013': 'Contra Costa',
                      '06041': 'Marin',
@@ -206,19 +196,13 @@ bay_area_geocodes = {'06001': 'Alameda',
                      }
 
 neigh_tt_by_county = avg_neighbor_tt.copy()
-neigh_tt_by_county['county_GEOID'] = neigh_tt_by_county['GEOID_neighbor'].str[:5]
-neigh_tt_by_county['county'] = neigh_tt_by_county['county_GEOID'].map(bay_area_geocodes)
+neigh_tt_by_county['county'] = neigh_tt_by_county['GEOID_neighbor'].str[:5]
 neigh_county_avg = neigh_tt_by_county.groupby('county')['car_travel_time'].mean().copy()
-neigh_county_avg
 
-#%%
 epc_tt_by_county = avg_epc_tt.copy()
 epc_tt_by_county['county'] = epc_tt_by_county['GEOID'].str[:5]
-epc_tt_by_county['county'] = neigh_tt_by_county['county_GEOID'].map(bay_area_geocodes)
 epc_county_avg = epc_tt_by_county.groupby('county')['car_travel_time'].mean().copy()
-epc_county_avg
 
-#%%
 # combine epc and neighbours averages
 county_tt_plot = pd.DataFrame({
     'EPC AvgTT by Car': epc_county_avg,
@@ -227,12 +211,9 @@ county_tt_plot = pd.DataFrame({
 
 county_tt_plot['county_name'] = county_tt_plot.index.map(bay_area_geocodes)
 
-print(county_tt_plot.head(10))
-
-#%%
 county_tt_plot.set_index('county_name').plot(kind='barh', figsize=(12, 8))
 
-plt.title('Travel Time Comparison by County')
+plt.title('Car Travel Time Comparison by County between EPCs and Neighbours')
 plt.xlabel('Average Travel Time')
 plt.ylabel('County')
 plt.legend()
@@ -244,3 +225,29 @@ plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
 plt.show()
 #%%
+############################################################################
+# create bar graph of car vs transit times, avg for each county
+
+avg_epc_tt
+# %%
+average_times['county'] = average_times['from_id'].str[:5]
+average_times_by_county = average_times.groupby('county')[['car_travel_time', 'transit_travel_time']].mean().round(2).copy()
+average_times_by_county['county_name'] = average_times_by_county.index.map(bay_area_geocodes)
+
+average_times_by_county
+
+average_times_by_county.set_index('county_name').plot(kind='barh', figsize=(12, 8), color = ['#8C149C', '#2E8A27'])
+
+plt.title('Travel Time Comparison by County between Car and Transit')
+plt.xlabel('Average Travel Time')
+plt.colorbar
+plt.ylabel('County')
+plt.legend()
+plt.tight_layout()
+
+save_path = base_path / "visualizations" / "county_avg_car_vs_transit.png"
+plt.savefig(save_path, dpi=300, bbox_inches='tight')
+
+
+plt.show()
+# %%
