@@ -351,31 +351,33 @@ m = avg_epc_tt.explore(
     location=[37.6, -122.2],    #Wylie added in to set the initial map view
     zoom_start=9,   #Wylie added in to set the initial map view
     column="travel_time", 
-    cmap="Greens",
+    cmap="Purples",
     tooltip=["travel_time", "GEOID", "total_pop"],
     name="EPC Tracts",      # layer label
     tiles="CartoDB positron",
-    style_kwds={
-        "color": "white",
-        "weight": 1,
-        "opacity": 1
-    }
+    legend_kwds={"caption": "EPC Travel Time (min)"}
+    # style_kwds={
+    #     "color": "black",
+    #     "weight": 1,
+    #     "opacity": 1
+    # }
 )
 
 m = avg_neighbor_tt.explore(
     location=[37.6, -122.2],    #Wylie added in to set the initial map view
     zoom_start=9,   #Wylie added in to set the initial map view
     column="travel_time", 
-    cmap="Greens",
+    cmap="Oranges",
     tiles="CartoDB positron",
     tooltip=["travel_time", "GEOID_neighbor", "total_pop"],
     name="Neighbor Tracts", # layer label
-    m=m,                    
-    style_kwds={
-        "color": "black",
-        "weight": 1,
-        "opacity": 1
-    }
+    m=m,
+    legend_kwds={"caption": "Neighbor Travel Time (min)"}                    
+    # style_kwds={
+    #     "color": "black",
+    #     "weight": 1,
+    #     "opacity": 1
+    # }
 )
 
 
