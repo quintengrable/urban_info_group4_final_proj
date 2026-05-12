@@ -31,11 +31,10 @@ It is not recommended to run R5Py with less than 4GB of RAM, and 8GB+ is preferr
     * `03_summary_statistics_visualization.py`: Creates a png comparing the day and night populations of the Bay Area by county
     * `04_epc_destinations.py`: Harmonizing LODES OD pairs with EPCs and EPC neighbors
     * `05_pub_trans_mobility.py`: using R5PY to route public transit and get travel times
-    * `06_car_mobility_analysis.py`: using R5PY to route cars and get travel times
-    * `get_graph.py`:
-    * `get_tt_matrix_car.py`:
+    * `06_car_mobility_analysis.py`: analysis of car travel times and transit travel times
+    * `get_tt_matrix_car.py`: using R5PY to route cars and save matrix of travel times. Not recommended to run on your own - it's slow!
     * `helper_function.py`: helper functions to aid in development
-    * `mapping_functions.py`:
+    * `mapping_functions.py`: map
 * `/visualizations`: All the visualization outputs from the project
 * `/docs`: This is where the assets for the website are hosted.
 
