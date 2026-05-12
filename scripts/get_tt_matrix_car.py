@@ -88,15 +88,14 @@ epc_travel_times.info()
 epc_travel_times.head(10)
 #%%
 #save epc tt matrix
-epc_car_tt_path = base_path / "data" / "processed" / "epc_car_tt_mapping.parquet"
+epc_car_tt_path = base_path / "data" / "processed" / "epc_car_tt_max120_mapping.parquet"
 epc_travel_times.to_parquet(epc_car_tt_path)
 
-#%%
 #%%
 #######################################################################
 #######################################################################
 # now create tt matric for non-EPC neighbors of EPCs
-#%%
+
 # read in neighbor tracts
 base_path = Path(__file__).parent.parent
 neighbor_tracts_path = base_path / "data" / "processed" / "neighbor_tracts.parquet"
@@ -109,6 +108,7 @@ neighbor_tracts['centroids'] = neighbor_tracts.geometry.centroid
 neighbor_tracts = neighbor_tracts.set_geometry('geometry')
 neighbor_tracts = neighbor_tracts.to_crs(epsg=4326)
 
+neighbor_tracts.head()
 #%%
 # non-epc neighbor origins
 neighbor_tract_origins = neighbor_tracts.copy()
@@ -141,8 +141,13 @@ neighbor_travel_times = r5py.TravelTimeMatrix(
 
 #%%
 #neighbor_travel_times.info()
-travel_times.head()
+neighbor_travel_times.head()
 #%%
 #save epc tt matrix
 neighbor_car_tt_path = base_path / "data" / "processed" / "neighbor_car_tt_mapping.parquet"
 neighbor_travel_times.to_parquet(neighbor_car_tt_path)
+
+print('saved')
+# %%
+neighbor_travel_times.sample(10)
+# %%
