@@ -304,7 +304,7 @@ plt.savefig(save_path, dpi=300, bbox_inches='tight')
 save_path = base_path / "docs" / "page_assets" / "county_avg_tt_car.png"
 plt.savefig(save_path)
 
-plt.show()
+#plt.show()
 #%%
 ############################################################################
 # create bar graph of car vs transit times, avg for each county
@@ -313,8 +313,6 @@ plt.show()
 epc_average_times['county'] = epc_average_times['from_id'].str[:5]
 epc_average_times_by_county = epc_average_times.groupby('county')[['car_travel_time', 'transit_travel_time']].mean().round(2).copy()
 epc_average_times_by_county['county_name'] = epc_average_times_by_county.index.map(bay_area_geocodes)
-
-display(epc_average_times_by_county)
 
 epc_average_times_by_county.set_index('county_name').plot(kind='barh', figsize=(12, 8), color = ['#8C149C', '#2E8A27'])
 
@@ -330,7 +328,7 @@ plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
 save_path = base_path / "docs" / "page_assets" / "county_avg_car_vs_transit_epc.png"
 plt.savefig(save_path, dpi=300, bbox_inches='tight')
-plt.show()
+#plt.show()
 # %%
 
 # car vs transit, neighbours
@@ -367,29 +365,23 @@ plt.savefig(save_path, dpi=300, bbox_inches='tight')
 save_path = base_path / "docs" / "page_assets" / "county_avg_car_vs_transit_neighbor.png"
 plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
-plt.show()
+#plt.show()
 # %%
-# 1. Calculate Multiplier for EPCs
 epc_average_times_by_county['epc_multiplier'] = (
     epc_average_times_by_county['transit_travel_time'] / 
     epc_average_times_by_county['car_travel_time']
 )
 
-# 2. Calculate Multiplier for Neighbors (using the logic from previous step)
 neighbor_average_times_by_county['neighbor_multiplier'] = (
     neighbor_average_times_by_county['transit_travel_time'] / 
     neighbor_average_times_by_county['car_travel_time']
 )
 
-# 3. Combine both into a single plotting dataframe
-# We use the county_name as the common index
 comparison_df = pd.DataFrame({
     'EPCs': epc_average_times_by_county.set_index('county_name')['epc_multiplier'],
     'Neighbors': neighbor_average_times_by_county.set_index('county_name')['neighbor_multiplier']
-}).sort_values(by='EPCs') # Sorting by EPC value for a cleaner look
+}).sort_values(by='EPCs') 
 
-# 4. Plotting
-# Using your preferred purple (#8C149C) and green (#2E8A27)
 ax = comparison_df.plot(
     kind='barh', 
     figsize=(12, 10), 
@@ -397,10 +389,10 @@ ax = comparison_df.plot(
     width=0.8
 )
 
-# Add a reference line at 1.0 (where Transit = Car)
+# add line a 1.0 (car = transit)
 plt.axvline(x=1, color='black', linestyle='--', alpha=0.5, label='Equal Time (1.0x)')
 
-# Add value labels to the end of the bars
+# add label to bars
 for p in ax.patches:
     ax.annotate(f"{p.get_width():.1f}x", 
                 (p.get_width() + 0.1, p.get_y() + p.get_height()/2), 
@@ -413,12 +405,11 @@ plt.legend(title="Area Type", loc='lower right')
 plt.grid(axis='x', linestyle=':', alpha=0.6)
 plt.tight_layout()
 
-# Save paths
 save_path_epc = base_path / "visualizations" / "transit_vs_car_multiplier.png"
 plt.savefig(save_path_epc, dpi=300, bbox_inches='tight')
 
 save_path_assets = base_path / "docs" / "page_assets" / "transit_vs_car_multiplier.png"
 plt.savefig(save_path_assets, dpi=300, bbox_inches='tight')
 
-plt.show()
+#plt.show()
 # %%

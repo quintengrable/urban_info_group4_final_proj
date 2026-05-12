@@ -92,5 +92,5 @@ plt.savefig(
     transparent=False
 )
 plt.tight_layout()
-plt.show()
+#plt.show()
 
