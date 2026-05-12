@@ -896,8 +896,8 @@
       </p>
 
       <div class="fig">
-          <iframe id ="transit" src="page_assets/avg_epc_neigh_tt_map.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
-        <p class="fig-caption">Figure 6. Average travel time to work via public transit for EPC tracts and their neighbors.</p>
+          <iframe id ="transit" src="page_assets/combined_travel_time_map.html" style="width:100%; height:500px; border:none; border-radius:8px;"></iframe>          
+        <p class="fig-caption">Figure 6. Average travel time to work via public transit and car for EPC tracts and their neighbors.</p>
       </div>
 
       <p class="body-text">
@@ -906,9 +906,7 @@
 
       <div class="two-up">
         <div class="fig">
-          <div class="fig-placeholder">
-            <strong>Avg car travel time for EPCs & neighbors per county</strong>
-          </div>
+          <img src="page_assets/county_avg_tt_car.png" alt="Description of map" style="width:100%; border-radius:8px;">
           <p class="fig-caption">Figure 7. Average travel time to work via car for EPC tracts and their neighbors, for each county in the Bay Area</p>
         </div>
         <div class="fig">
@@ -928,27 +926,26 @@
         <p>While commute travel times allow direct comparisons between different tracts, the <em>gap</em> between the transit and car commute lengths within the same area reveals how well (or poorly) the transit network serves it's most disadvantaged residents.</p>
       </div>
 
-      <div class="two-up">
-        <div class="fig">
-          <div class="fig-placeholder">
-            <strong>Purple green car vs transit for EPCs</strong>
-          </div>
-          <p class="fig-caption">Figure 9. XXX</p>
-        </div>
-        <div class="fig">
-          <div class="fig-placeholder">
-            <strong>Purple green car vs transit for neighbors</strong>
-          </div>
-          <p class="fig-caption">Figure 10. XXX</p>
-        </div>
-      </div>
+<div class="stacked-container">
+  <div class="fig" style="margin-bottom: 20px;">
+    <img src="page_assets/county_avg_car_vs_transit_epc.png" alt="Map of EPCs" style="width:100%; height:auto; border-radius:8px;">
+    <p><strong>Purple green car vs transit for EPCs</strong></p>
+    <p class="fig-caption">Figure 9. XXX</p>
+  </div>
+
+  <div class="fig">
+    <img src="page_assets/county_avg_car_vs_transit_neighbor.png" alt="Map of neighbors" style="width:100%; height:auto; border-radius:8px;">
+    <p><strong>Purple green car vs transit for neighbors</strong></p>
+    <p class="fig-caption">Figure 10. XXX</p>
+  </div>
+</div>
 
       <p class="body-text">
         XXX Analysis of graphs above.
       </p>
 
       <div class="fig">
-          <div class="fig-placeholder">
+    <img src="page_assets/transit_vs_car_multiplier.png" alt="Map of neighbors" style="width:100%; height:auto; border-radius:8px;">
             <strong>Normalized difference between EPCs & neighbors </strong>
           </div>
           <p class="fig-caption">Figure 11. XXX</p>
