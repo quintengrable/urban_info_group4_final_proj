@@ -1,6 +1,9 @@
 # urban_info_group4_final_proj
 Final project repository for Group 4 for Urban Informatics and Visualization
 
+Click here to access the project website:
+https://quintengrable.github.io/urban_info_group4_final_proj/
+
 This project takes LODES OD Pair Data and ACS Census Tract Population Data and uses it to learn about mobility insights of Bay Area Commuters. There is a special
 emphasis on equity priority communities (EPCs) and calculating if the locations they commute to work by car and public transit take longer than the residents of neighboring non-EPC tracts.
 
@@ -22,10 +25,6 @@ It is not recommended to run R5Py with less than 4GB of RAM, and 8GB+ is preferr
 
 # Project Structure
 * `/data`: Contains raw and processed data files necessary for the analysis
-* `/notebooks`: 
-    * `data_aquisition.ipynb`: Acquires the ACS data, LODES data, and MTC data
-    * `day_night_pop.ipynb`: Performs initial analysis on daytime and nighttime population of Bay Area
-    * `summary_statistics_visualization.ipynb`: 
 * `/scripts`:
     * `car_mobility.py`: using R5PY to route cars and get travel times
     * `epc_destinations.py`: Harmonizing LODES OD pairs with EPCs and EPC neighbors
@@ -34,6 +33,7 @@ It is not recommended to run R5Py with less than 4GB of RAM, and 8GB+ is preferr
     * `pub_trans_mobility.py`: using R5PY to route public transit and get travel times
     * `routing.py`: 
 * `/visualizations`: All the visualization outputs from the project
+* `/docs`: This is where the assets for the website are hosted.
 
 1. Start with running the data_aquisition notebook, this will let you get the datasets for LODES8 2023, ACS, and MTC's EPC data for the Bay Area. 
 2. Follow up by running the rest of the python notebooks
