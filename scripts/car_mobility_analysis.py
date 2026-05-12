@@ -76,11 +76,11 @@ data_file = base_path / "data" / "processed" / "day_night_pop_change.parquet"
 population_grid = gpd.read_parquet(data_file)
 epc_grid = population_grid[population_grid['is_epc_2050']==True].copy().reset_index().drop(columns="index")
 
-avg_epc_tt = epc_grid.merge(average_times, left_on="GEOID", right_on="from_id")
-avg_epc_tt['car_travel_time'] = avg_epc_tt['car_travel_time'].round(2)
-avg_epc_tt.head()
+avg_epc_tt_car = epc_grid.merge(average_times, left_on="GEOID", right_on="from_id")
+avg_epc_tt_car['car_travel_time'] = avg_epc_tt_car['car_travel_time'].round(2)
+avg_epc_tt_car.head()
 
-m = avg_epc_tt.explore("car_travel_time", 
+m = avg_epc_tt_car.explore("car_travel_time", 
                        cmap="Greens",
                        tiles="CartoDB positron",
                        tooltip=["car_travel_time","GEOID","total_pop"]
@@ -115,6 +115,8 @@ neighbor_car_tt.rename(columns = {'travel_time':'car_travel_time'}, inplace = Tr
 neighbor_car_tt.head(10)
 
 neighbor_average_times = neighbor_car_tt.groupby('from_id')['car_travel_time'].mean().reset_index().round(2)
+#neighbor_average_times = neighbor_car_tt.groupby('from_id')['transit_travel_time'].mean().reset_index().round(2)
+
 neighbor_average_times.head()
 
 #%%
@@ -131,12 +133,11 @@ neighbor_tracts.head()
 
 #%%
 # merge travel times with geometry
-avg_neighbor_tt = neighbor_tracts.merge(neighbor_average_times, left_on="GEOID_neighbor", right_on="from_id")
-avg_neighbor_tt.head()
-avg_neighbor_tt['car_travel_time'] = avg_neighbor_tt['car_travel_time'].round(2)
+avg_neighbor_tt_car = neighbor_tracts.merge(neighbor_average_times, left_on="GEOID_neighbor", right_on="from_id")
+avg_neighbor_tt_car['car_travel_time'] = avg_neighbor_tt_car['car_travel_time'].round(2)
 # drop rows where travel time was zero
-avg_neighbor_tt = avg_neighbor_tt[avg_neighbor_tt['car_travel_time'] != 0]
-
+avg_neighbor_tt_car = avg_neighbor_tt_car[avg_neighbor_tt_car['car_travel_time'] != 0]
+avg_neighbor_tt_car.head()
 #%%
 # plot car travel time for neighbours only
 m = avg_neighbor_tt.explore("car_travel_time", 
@@ -151,7 +152,7 @@ m.save(map_output_path)
 # %%
 ###########################################################################
 # plot car travel time for EPCs and neighbors together
-m = avg_neighbor_tt.explore(
+m = avg_neighbor_tt_car.explore(
     column="car_travel_time", 
     cmap="Oranges",
     tiles="CartoDB positron",
@@ -159,7 +160,7 @@ m = avg_neighbor_tt.explore(
     name="Neighbor Tracts", # layer label
 )
 
-m = avg_epc_tt.explore(
+m = avg_epc_tt_car.explore(
     column="car_travel_time", 
     cmap="Greens",
     tooltip=["car_travel_time", "GEOID", "total_pop"],
@@ -175,6 +176,83 @@ m
 # save map
 map_output_path = base_path / "visualizations" / "car_avg_epc_neigh_tt_map.html"
 m.save(map_output_path)
+
+#%%
+path = base_path / "data" / "processed" / "avg_epc_tt_transit.parquet"
+avg_epc_tt_transit = gpd.read_parquet(path)
+
+path = base_path / "data" / "processed" / "avg_neighbor_tt_transit.parquet"
+avg_neighbor_tt_transit = gpd.read_parquet(path)
+avg_neighbor_tt_transit.head()
+
+
+#%% 
+##############################################################################
+# map: transit and car times for epcs and neighbours, 2 layers
+# had some issues with legend showing up so needed to create legend manually
+import branca.colormap as cm
+for map_name in dir(cm.linear):
+    print(map_name)
+#%%
+m = folium.Map(location=[37.6, -122.2], zoom_start=9, tiles="CartoDB positron")
+
+# groups
+car_group = folium.FeatureGroup(name="Car Travel Mode").add_to(m)
+transit_group = folium.FeatureGroup(name="Transit Travel Mode", show=False).add_to(m)
+
+# neighbours - oranges
+avg_neighbor_tt_car.explore(
+    column="car_travel_time", cmap="Greens", m=car_group, legend=False,
+    tooltip=["car_travel_time", "GEOID_neighbor", "total_pop"]
+)
+# car neighbours legend
+car_neigh_min = avg_neighbor_tt_car["car_travel_time"].min()
+car_neigh_max = avg_neighbor_tt_car["car_travel_time"].max()
+car_neigh_legend = cm.linear.Greens_09.scale(car_neigh_min, car_neigh_max)
+car_neigh_legend.caption = "Car Travel Time, Neighbours (mins)"
+m.add_child(car_neigh_legend)
+
+# epc - purples
+avg_epc_tt_car.explore(
+    column="car_travel_time", cmap="Blues", m=car_group, legend=False,
+    tooltip=["car_travel_time", "GEOID", "total_pop"]
+)
+# car epc legend
+car_epc_min = avg_epc_tt_car["car_travel_time"].min()
+car_epc_max = avg_epc_tt_car["car_travel_time"].max()
+car_epc_legend = cm.linear.Blues_09.scale(car_epc_min, car_epc_max)
+car_epc_legend.caption = "Car Travel Time, EPCs (mins)"
+m.add_child(car_epc_legend)
+
+# neighbours - oranges
+avg_neighbor_tt_transit.explore(
+    column="travel_time", cmap="Oranges", m=transit_group, legend=False,
+    tooltip=["travel_time", "GEOID_neighbor", "total_pop"]
+)
+# transit neighbours legend
+tran_neigh_min = avg_neighbor_tt_transit["travel_time"].min()
+tran_neigh_max = avg_neighbor_tt_transit["travel_time"].max()
+tran_neigh_legend = cm.linear.Oranges_09.scale(tran_neigh_min, tran_neigh_max)
+tran_neigh_legend.caption = "Transit Travel Time, Neighbours (mins)"
+m.add_child(tran_neigh_legend)
+
+# epc - purples 
+avg_epc_tt_transit.explore(
+    column="travel_time", cmap="Purples", m=transit_group, legend=False,
+    tooltip=["travel_time", "GEOID", "total_pop"]
+)
+# transit epc legend
+tran_epc_min = avg_epc_tt_transit["travel_time"].min()
+tran_epc_max = avg_epc_tt_transit["travel_time"].max()
+tran_epc_legend = cm.linear.Purples_09.scale(tran_epc_min, tran_epc_max)
+tran_epc_legend.caption = "Transit Travel Time, EPCs (mins)"
+m.add_child(tran_epc_legend)
+
+folium.LayerControl(collapsed=False).add_to(m)
+
+map_output_path = base_path / "visualizations" / "combined_travel_time_map.html"
+m.save(map_output_path)
+m
 # %%
 #################################################################
 # create bar graph of travel times by car for epcs and neighbours by county
