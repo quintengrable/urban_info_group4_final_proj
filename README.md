@@ -29,12 +29,13 @@ It is not recommended to run R5Py with less than 4GB of RAM, and 8GB+ is preferr
     * `01_data_aquisition.py`: Acquires the ACS data, LODES data, and MTC data
     * `02_day_night_pop.py`: Performs initial analysis on daytime and nighttime population of Bay Area
     * `03_summary_statistics_visualization.py`: Creates a png comparing the day and night populations of the Bay Area by county
-    * `car_mobility.py`: using R5PY to route cars and get travel times
-    * `epc_destinations.py`: Harmonizing LODES OD pairs with EPCs and EPC neighbors
-    * `get_graph.py`: 
+    * `04_epc_destinations.py`: Harmonizing LODES OD pairs with EPCs and EPC neighbors
+    * `05_pub_trans_mobility.py`: using R5PY to route public transit and get travel times
+    * `06_car_mobility_analysis.py`: using R5PY to route cars and get travel times
+    * `get_graph.py`:
+    * `get_tt_matrix_car.py`:
     * `helper_function.py`: helper functions to aid in development
-    * `pub_trans_mobility.py`: using R5PY to route public transit and get travel times
-    * `routing.py`: 
+    * `mapping_functions.py`:
 * `/visualizations`: All the visualization outputs from the project
 * `/docs`: This is where the assets for the website are hosted.
 
