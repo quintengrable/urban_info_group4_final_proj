@@ -107,31 +107,6 @@ base_path = Path(__file__).parent.parent
 neighbor_tracts_path = base_path / "data" / "processed" / "neighbor_tracts.parquet"
 neighbor_map_gdf.to_parquet(neighbor_tracts_path)
 #%%
-# mapping neighbor non-epc tracts to verify function worked
-
-neighbor_map_gdf = get_neighboring_non_epcs(population_grid)
-
-m = population_grid[population_grid['is_epc_2050'] == True].explore(
-    color="orange",
-    style_kwds={'fillOpacity': 0.5, 'color': 'black', 'weight': 1},
-    name="EPC Tracts",
-    tooltip=["GEOID", "is_epc_2050"]
-)
-
-neighbor_map_gdf.explore(
-    m=m,
-    color="royalblue",
-    style_kwds={'fillOpacity': 0.7, 'color': 'white', 'weight': 2},
-    name="Non-EPC Neighbors",
-    tooltip=["GEOID_neighbor"]
-)
-
-m
-
-map_output_path = base_path / "visualizations" / "qg_testing.html"
-m.save(map_output_path)
-
-#%%
 # merge neighbor non-epc data with lodes od pairs
 neighbor_od_pairs = lodes_od_pairs.merge(neighbor_map_gdf, left_on="home_tract", right_on="GEOID_neighbor")
 neighbor_od_pairs = gpd.GeoDataFrame(neighbor_od_pairs, geometry='geometry', crs="EPSG:4326")
@@ -145,8 +120,6 @@ neighbor_od_pairs = neighbor_od_pairs.drop(columns=['within_tract',
 #%%
 neighbor_od_pairs['geometry'] = neighbor_od_pairs.geometry.centroid
 neighbor_od_pairs = neighbor_od_pairs.drop(columns=['geometry'])
-
-neighbor_od_pairs.info()
 #%%
 # save the data so it can be used in the pub_trans_mobility file
 base_path = Path(__file__).parent.parent
