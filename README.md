@@ -39,7 +39,4 @@ It is not recommended to run R5Py with less than 4GB of RAM, and 8GB+ is preferr
 * `/visualizations`: All the visualization outputs from the project
 * `/docs`: This is where the assets for the website are hosted.
 
-1. Start with running the data_aquisition notebook, this will let you get the datasets for LODES8 2023, ACS, and MTC's EPC data for the Bay Area. 
-2. Follow up by running the rest of the python notebooks
-3. Run the epc_destinations script, this will initilize data for the R5PY routing
-4. Run the pub_trans_mobility and car_mobility scripts.
+Run the scripts in the order provided and the project should work as intended!
