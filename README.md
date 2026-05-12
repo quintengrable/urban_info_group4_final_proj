@@ -26,6 +26,9 @@ It is not recommended to run R5Py with less than 4GB of RAM, and 8GB+ is preferr
 # Project Structure
 * `/data`: Contains raw and processed data files necessary for the analysis
 * `/scripts`:
+    * `01_data_aquisition.py`: Acquires the ACS data, LODES data, and MTC data
+    * `02_day_night_pop.py`: Performs initial analysis on daytime and nighttime population of Bay Area
+    * `03_summary_statistics_visualization.py`: Creates a png comparing the day and night populations of the Bay Area by county
     * `car_mobility.py`: using R5PY to route cars and get travel times
     * `epc_destinations.py`: Harmonizing LODES OD pairs with EPCs and EPC neighbors
     * `get_graph.py`: 
