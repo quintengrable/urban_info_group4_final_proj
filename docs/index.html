@@ -620,6 +620,7 @@
           <div class="method-icon">⇄</div>
           <h3>Origin-destination data</h3>
           <p><strong>LODES8</strong> — 2023 LODES data was used, to harmonize with the ACS 2023 5-year estimates, the most recent data currently available. LODES data captures workplace-residential pairs for covered workers, but misses jobs like self-employed, remote workers, and informal work.</p>
+          <p><strong>R5Py</strong> — R5Py was used for routing in our project, predicting the public transit routes and car driving routes between the OD pairs of tracts. R5Py uses Open Street Map data and GTFS data to simulate commute times, but doesn't take traffic into account.</p>
           <div class="method-caveat">
             <span class="caveat-label">Coverage note</span>
             As informal workers are not counted in LODES data, EPC tracts which may have more of these informal jobs have the potential to be misrepresented by the data available. This could bias EPC vs non-EPC comparisons.
