@@ -327,8 +327,8 @@ bay_geocode_map = {'06001': 'Alameda',
 
 
 county_tt_plot = pd.DataFrame({
-    'EPC Average': epc_county_avg,
-    'Neighbor Average': neigh_county_avg
+    'EPC AvgTT by Transit': epc_county_avg,
+    'Neighbor AvgTT by Transit': neigh_county_avg
 })
 
 county_tt_plot['county_name'] = county_tt_plot.index.map(bay_geocode_map)
@@ -338,14 +338,16 @@ print(county_tt_plot.head(10))
 #%%
 county_tt_plot.set_index('county_name').plot(kind='barh', figsize=(12, 8))
 
-plt.title('Travel Time Comparison by County')
+plt.title('Transit Travel Time Comparison by County')
 plt.xlabel('Average Travel Time')
 plt.ylabel('County')
-plt.legend()
+plt.legend(loc='lower right', frameon=True, framealpha=1)
 plt.tight_layout()
 
 save_path = base_path / "visualizations" / "county_avg_tt.png"
 plt.savefig(save_path, dpi=300, bbox_inches='tight')
 
+save_path = base_path / "docs" / "page_assets" / "county_avg_tt.png"
+plt.savefig(save_path, dpi=300, bbox_inches='tight')
 plt.show()
 #%%
