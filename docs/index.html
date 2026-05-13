@@ -896,7 +896,10 @@
       <p class="section-number">04 — The commute itself</p>
       <h2>Where are EPC residents going, and how long does it take them?</h2>
       <p class="intro-text">
-        To investigate the commute lengths of EPC workers, we modeled travel times by both car and transit for EPCs and their surrounding tracts. A spatial join was performed to find tracts that touched EPC tracts that weren't EPC tracts themselves. We included all non-EPC tracts that touched an EPC tract in our analysis.
+        To investigate the commute lengths of EPC workers, we modeled travel times by both car and transit for EPCs and their surrounding tracts. 
+        A spatial join was performed to find tracts that touched EPC tracts that weren't EPC tracts themselves. 
+        We included all non-EPC tracts that touched an EPC tract in our analysis. 
+        There are some public transit tracts that have a travel time of zero, this means that R5Py couldn't find a way from the centroid of that tract to the destination tracts associated with it.
       </p>
 
       <div class="fig">
