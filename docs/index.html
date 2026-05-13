@@ -650,6 +650,7 @@
           <p><b>Dark Data Type 1 - Data we know are missing</b>
             <br>Self-employed, remote workers, gig workers, and informal workers are missing from LODES coverage, which could result in underrepresentation in EPCs.
             Although there is nothing we can do to mitigate this missing data, it is important to acknowledge the bias that this introduces into our visualizations.
+            Travel times for cars calculated using R5PY represent free-flow traffic, which is an unrealistic representation of what the average rush-hour commute consists of. 
           </p>
 
           <p><b>Dark Data Type 3 - Choosing just some cases</b>
@@ -690,7 +691,7 @@
       <p class="section-number">01 — Setting the scene: Daytime Population</p>
       <h2>The daytime population distribution of the Bay Area looks very different than where people reside at night</h2>
       <p class="intro-text">
-        When a huge transportation network allows for wide difference in where people live and work, the maps for daytime and nighttime population can look very different. 
+        When a huge transportation network allows for wide differences in where people live and work, the maps for daytime and nighttime population can look very different. 
         Residential population, the geography we're most used to, tells us where people are in the evenings. During working hours, a very different spatial pattern emerges.
       </p>
       <p class="body-text">
@@ -770,11 +771,11 @@
       <p class="body-text">
         As expected, the distribution of people is much more concentrated in the daytime map, particularly in downtown San Francisco and Santa Clara. 
         Census tracts that contain the airports (SFO, OAK, and SJC) also show high daytime populations.
-        Looking at the outlined EPC tracts <em>(Equity Priority Communities - census tracts designated by MTC as facing compounding disadvantages including low income and limited car ownership)</em>, the trend is one of distributed population during the night and low population during the day, which follows the same pattern as the Bay Area as a whole.
+        Looking at the outlined EPC tracts <em>(Equity Priority Communities - census tracts designated by MTC as facing compounding disadvantages including low income and limited car ownership)</em>, the trend shows a more distributed population during the night and low population during the day, which follows the same pattern as many residential neighbourhoods in the Bay Area.
       </p>
 
       <div class="bridge">
-        <p>The difference between these maps is clear, but the real story is found in the direction and distance of the commute flows, and in who is making them.</p>
+        <p>These maps clearly show the difference between nighttime and daytime populations, raising the question - how do commute patterns vary between different groups of people, and how are these commute patterns served by public transportation?</p>
       </div>
     </section>
 
@@ -816,7 +817,9 @@
 
       <p class="body-text">
         Although it can be insightful to observe the spatial pattern across the whole Bay Area, large differences in demographics, built form, and local governance mean that it can be less relevant to compare daytime and nightime worker populations at such a large scale.
-        To account for the highest level variation, the figure below compares daytime and nightime worker population by county. It is important to note that within all counties there is still a huge amount of variation, so this insight is still generalized.
+        To account for the highest level variation, the figure below compares daytime and nightime worker population by county. 
+        San Francisco and Santa Clara counties represent the highest influx of workers during the day, while Solano and Contra Costa represent counties with higher residential populations, and fewer workers during the day.
+        It is important to note that within all counties there is still a huge amount of variation, so this insight is still generalized.
       </p>
 
       <div class="fig">
@@ -901,7 +904,8 @@
       </div>
 
       <p class="body-text">
-        XXX Analysis of map above.
+        By examining EPCs and their neighbouring tracts, we can see how broader geography in the Bay Area has a greater impact on travel times than EPC status. For example, San Francisco and Alameda have lower commute times, by both transit and car, than more suburban counties such as Contra Costa. 
+
       </p>
 
       <div class="two-up">
@@ -916,10 +920,13 @@
       </div>
 
       <p class="body-text">
-        From Figure 8 above, the average travel time for EPCs and neighbors of EPCs is quite similar in the more urban counties,
-        and in the counties with a less dense population, it can be seen that the tracts neighboring EPCs actually have worse travel times.
+        From Figure 7 above, the average travel time by car is generally higher for neighbouring tracts than for EPCs. This difference is wider in more suburban counties such as Sonoma and Marin.
+        This phenomenon is likely due to the location of employment for higher-income tracts, as many of these jobs will be located in urban centers such as San Francisco or Santa Clara, necessitating a longer commute. 
+        
+        From Figure 8 above, the average travel time by transit for EPCs and neighbors of EPCs is quite similar in the more urban counties,
+        and in the counties with a less dense population, it can be seen that the tracts neighboring EPCs actually have longer transit travel times.
         This is likely due to the fact that EPCs tend to be located in the urban centers, where transit is usually stronger, compared to the more
-        rural counties like Sonoma and Marin.
+        rural counties like Sonoma and Marin. Additionally, as neighbouring tracts may travel further to their employment centers, this may account for a longer travel time.
       </p>
 
       <div class="bridge">
@@ -929,36 +936,33 @@
 <div class="stacked-container">
   <div class="fig" style="margin-bottom: 20px;">
     <img src="page_assets/county_avg_car_vs_transit_epc.png" alt="Map of EPCs" style="width:100%; height:auto; border-radius:8px;">
-    <p><strong>Purple green car vs transit for EPCs</strong></p>
-    <p class="fig-caption">Figure 9. XXX</p>
+    <p class="fig-caption">Figure 9. Comparison of Travel Times by Transit and Car in EPC Communities at the County Level</p>
   </div>
 
   <div class="fig">
     <img src="page_assets/county_avg_car_vs_transit_neighbor.png" alt="Map of neighbors" style="width:100%; height:auto; border-radius:8px;">
-    <p><strong>Purple green car vs transit for neighbors</strong></p>
-    <p class="fig-caption">Figure 10. XXX</p>
+    <p class="fig-caption">Figure 10. Comparison of Travel Times by Transit and Car in Neighbouring Tracts at the County Level</p>
   </div>
 </div>
 
       <p class="body-text">
-        XXX Analysis of graphs above.
+        Figures 9 and 10 highlight how differently car and transit trips serve the commuting patterns of a neighbourhood. In EPCs across the Bay Area, transit trips take much longer compared to the same trip made in a personal vehicle. 
+        In neighbouring tracts, this difference is smaller, highlighting how these neighbourhoods and their work locations are better connected by transit. 
       </p>
 
       <div class="fig">
     <img src="page_assets/transit_vs_car_multiplier.png" alt="Map of neighbors" style="width:100%; height:auto; border-radius:8px;">
-            <strong>Normalized difference between EPCs & neighbors </strong>
-          </div>
-          <p class="fig-caption">Figure 11. XXX</p>
+          
+          <p class="fig-caption">Figure 11. Normalized Transit vs Driving Time by County for EPCs and Neighbouring Tracts</p>
         </div>
     </section>
 
     <p class="body-text">
-        XXX Analysis of graph above.
+        Figure 11 normalizes travel times by representing transit as a multiple of the average car trip. For example, if a commute takes 10 minutes by car and 30 minutes by transit, the transit mulitplier will be 3.0x. 
+        This figure shows how transit serves EPC tracts and work destinations more poorly than neighbouring tracts and their work destinations, as EPC communities face much higher transit multiplier scores than their neighbouring tracts. 
       </p>
 
     <div class="section-caveat">
-      <div class="caveat-row">
-        <div class="caveat-col">
           <span class="caveat-label">What this doesn't tell us</span>
           <p>The transit travel times in this section were calculated using the centroids of each tract. This is obviously
             not accurate to reality, but there were no more granular geographic locations provided in the LODES data and simulating 
@@ -967,10 +971,6 @@
             in the denser, urban tracts (which are smaller) is a better estimate than the larger, more rural tracts on the edges of the Bay Area.
           </p>
         </div>
-        <div class="caveat-col">
-          <span class="caveat-label">Follow-up question</span>
-          <p>While EPCs have decent access to transit in the urban areas, are their job choices limited by the amount of time it takes
-            to arrive anywhere using transit?
           </p>
         </div>
       </div>
